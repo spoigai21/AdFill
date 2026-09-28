@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import cache
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +21,16 @@ def load_titles(ml_dir: Path) -> dict[int, frozenset[str]]:
     }
 
 
+@cache
+def _ratings(ml_dir: Path) -> pd.DataFrame:
+    return pd.read_csv(
+        ml_dir / "ratings.csv",
+        usecols=["userId", "movieId", "timestamp"],
+        dtype={"userId": "int32", "movieId": "int32", "timestamp": "int64"},
+        engine="pyarrow",
+    )
+
+
 def load_movielens_sessions(
     ml_dir: Path,
     start: int,
@@ -33,12 +44,7 @@ def load_movielens_sessions(
     Users often rate dozens of titles in one sitting, which is not viewing. Keeping only the first
     `max_per_viewer_day` ratings per viewer per day turns rating bursts into a plausible watch pattern.
     """
-    r = pd.read_csv(
-        ml_dir / "ratings.csv",
-        usecols=["userId", "movieId", "timestamp"],
-        dtype={"userId": "int32", "movieId": "int32", "timestamp": "int64"},
-        engine="pyarrow",
-    )
+    r = _ratings(ml_dir)
     r = r[(r.timestamp >= start) & (r.timestamp < end)]
     viewers = np.sort(r.userId.unique())
     rng = np.random.default_rng([seed, 0x5E55])

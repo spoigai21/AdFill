@@ -11,6 +11,7 @@
   "viewer_fraction": 1.0,
   "urgency_exponent": 1.0,
   "makegood_ratio": 1.0,
+  "price_source": "criteo",
   "run_dir": "data/runs"
  },
  "config": {
@@ -72,6 +73,7 @@
    ]
   ],
   "max_ad_seconds_per_hour": 240,
+  "price_source": "criteo",
   "n_programmatic_advertisers": 60,
   "bids_per_break_mean": 4.0,
   "bid_cpm_median": 18.0,
@@ -132,48 +134,48 @@
  "results": {
   "adfill": {
    "breaks": 32785,
-   "programmatic_revenue": 1641.82,
-   "guaranteed_revenue": 1841.86,
-   "makegood_liability": 41.55,
-   "total_revenue": 3442.13,
+   "programmatic_revenue": 5245.26,
+   "guaranteed_revenue": 1829.2,
+   "makegood_liability": 54.21,
+   "total_revenue": 7020.25,
    "campaigns": 40,
    "delivered_in_full": 20,
    "delivered_in_full_share": 0.5,
-   "mean_delivery_share": 0.9662,
+   "mean_delivery_share": 0.9606,
    "ad_seconds_requested": 2309160,
    "ad_seconds_filled": 1568595,
    "underfilled_breaks": 19,
-   "us_per_decision": 68.1
+   "us_per_decision": 68.6
   },
   "guaranteed_first": {
    "breaks": 32785,
-   "programmatic_revenue": 1052.31,
+   "programmatic_revenue": 3006.37,
    "guaranteed_revenue": 1883.41,
    "makegood_liability": 0.0,
-   "total_revenue": 2935.71,
+   "total_revenue": 4889.77,
    "campaigns": 40,
    "delivered_in_full": 40,
    "delivered_in_full_share": 1.0,
    "mean_delivery_share": 1.0,
    "ad_seconds_requested": 2309160,
-   "ad_seconds_filled": 1503330,
-   "underfilled_breaks": 3743,
-   "us_per_decision": 31.5
+   "ad_seconds_filled": 1503585,
+   "underfilled_breaks": 3738,
+   "us_per_decision": 32.3
   },
   "highest_bid": {
    "breaks": 32785,
-   "programmatic_revenue": 1975.69,
-   "guaranteed_revenue": 833.12,
-   "makegood_liability": 1050.28,
-   "total_revenue": 1758.53,
+   "programmatic_revenue": 5596.49,
+   "guaranteed_revenue": 836.19,
+   "makegood_liability": 1047.21,
+   "total_revenue": 5385.47,
    "campaigns": 40,
    "delivered_in_full": 9,
    "delivered_in_full_share": 0.225,
-   "mean_delivery_share": 0.4967,
+   "mean_delivery_share": 0.4985,
    "ad_seconds_requested": 2309160,
    "ad_seconds_filled": 1568595,
    "underfilled_breaks": 21,
-   "us_per_decision": 53.3
+   "us_per_decision": 53.5
   }
  }
 }

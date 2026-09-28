@@ -26,6 +26,7 @@ class SimConfig:
     max_ad_seconds_per_hour: int = 240
 
     # programmatic demand
+    price_source: str = "criteo"  # "criteo" (real clearing prices) or "lognormal" (no data needed)
     n_programmatic_advertisers: int = 60
     bids_per_break_mean: float = 4.0
     bid_cpm_median: float = 18.0
@@ -48,7 +49,7 @@ class SimConfig:
     device_targeted_share: float = 0.4  # targeted campaigns buy TV only
 
     # allocation
-    urgency_exponent: float = 1.0  # swept in results; see spec/BUG_LOG.md B2
+    urgency_exponent: float = 0.5  # chosen on tuning windows only; see spec/BUG_LOG.md B6
     pod_tolerance_s: int = 0
 
     def to_dict(self) -> dict:

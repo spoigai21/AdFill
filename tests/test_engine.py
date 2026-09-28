@@ -11,7 +11,7 @@ from adfill.sim.config import SimConfig
 from adfill.sim.runner import run_policy
 from adfill.sim.world import synthetic_world
 
-CFG = SimConfig(seed=7)
+CFG = SimConfig(seed=7, price_source="lognormal")  # tests must not need the Criteo download
 
 
 @pytest.fixture(scope="module")

@@ -27,12 +27,16 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 
 | Rule | Value | Why |
 |---|---|---|
-| Bids per break | Poisson, mean 4 | Placeholder until Criteo prices are wired in. |
-| Bid CPM | lognormal, median $18, σ 0.7 | Placeholder shape until Criteo; heavy right tail as real clearing prices have. |
-| Per-advertiser price level | lognormal multiplier, σ 0.3, fixed per advertiser | Some buyers consistently pay more. |
+| Bids per break | Poisson, mean 4 | The data has bids per impression, not per break. |
+| Bid CPM shape | sampled from real Criteo per-impression `cost`, one Criteo campaign per programmatic advertiser | Real within- and between-advertiser spread: p90 is 8.6× the median, p99 45×. |
+| Which Criteo campaigns | 60 drawn per seed from the 346 with 10,000+ impressions | Enough rows per campaign to sample its distribution. |
+| Bid CPM level | pooled median of the chosen campaigns scaled to $18 | Criteo costs are in undisclosed scaled units; the level is a choice, the shape is data. |
+| Criteo costs are treated as bids | — | They are clearing prices of won impressions (censored). Phase 3 models the censoring. |
+| Criteo is display retargeting, not video | — | The only large public per-impression price set available. Stated as a limitation. |
 | Device price multiplier | tv 1.3, mobile 0.8, desktop 0.9, tablet 0.9 | TV inventory clears higher. |
 | Programmatic advertisers | 60, each in one fixed category | See the category rule below. |
 | Bid price is what the buyer pays | — | Value-based allocation, pay-as-bid. Not a second-price auction. |
+| Fallback price source (`lognormal`, tests only) | median $18, σ 0.7, per-advertiser σ 0.3 | Lets tests and fresh clones run without the download. |
 
 ## Guaranteed deals
 

@@ -84,9 +84,16 @@ required_win_share = debt / forecast_matching_supply(campaign, now .. deal_end)
 | > 0.9 | nearly every matching slot is needed | should beat almost any bid |
 | > 1.0 | **cannot be delivered** | take every matching slot, and flag the oversell |
 
-Urgency must be **flat while slack exists and steep as the share approaches 1**, not linear. A linear
-ramp makes guarantees outbid cash far too early and leaves revenue on the table. The exact curve is a
-tunable parameter, and §8 requires reporting sensitivity to it.
+The curve is `urgency = share ^ k` below 1, pinned high at or above 1. **The shape is a hypothesis, not
+a given.** The intuitive design is flat while slack exists and steep near 1 (large `k`): let cash win
+early, because a promise with slack can be met later from cheaper inventory. The counter-risk is that
+every campaign defers at once and they collide near their deadlines — and the forecast in §2.2 does not
+see competing campaigns, so it overstates each one's slack. Which effect dominates is measured: §8
+requires the headline pair across `k`, and the answer is expected to depend on forecast quality, so the
+sweep is repeated once the Phase 3 forecaster exists.
+
+The cost of skipping is the full cost of an undelivered impression: the contract payment forgone plus
+the makegood owed.
 
 ### 2.3 Predicted action rate — where the model sits
 

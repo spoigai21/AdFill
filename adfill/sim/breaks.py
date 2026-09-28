@@ -7,6 +7,7 @@ import pandas as pd
 
 from adfill.core.model import Bid, Break, Creative
 from adfill.sim.config import CATEGORIES, SimConfig
+from adfill.sim.prices import CriteoPrices
 
 
 def _choice(rng: np.random.Generator, table: tuple[tuple, ...], size: int) -> np.ndarray:
@@ -43,13 +44,19 @@ def make_breaks(
     total = int(n_bids.sum())
     adv = rng.integers(0, cfg.n_programmatic_advertisers, total)
     dur = _choice(rng, cfg.creative_durations_s, total)
-    base = cfg.bid_cpm_median * np.exp(cfg.bid_cpm_sigma * rng.standard_normal(total))
     adv_rng = np.random.default_rng([cfg.seed, 0xAD])
     adv_mult = np.exp(cfg.advertiser_price_sigma * adv_rng.standard_normal(cfg.n_programmatic_advertisers))
     adv_cat = adv_rng.choice(len(CATEGORIES), cfg.n_programmatic_advertisers)
+    if cfg.price_source == "criteo":
+        prices = CriteoPrices(cfg.n_programmatic_advertisers, cfg.bid_cpm_median, cfg.seed)
+        base = prices.draw(adv, rng)
+    elif cfg.price_source == "lognormal":
+        base = cfg.bid_cpm_median * np.exp(cfg.bid_cpm_sigma * rng.standard_normal(total)) * adv_mult[adv]
+    else:
+        raise ValueError(f"unknown price_source {cfg.price_source!r}")
     dev_mult = dict(cfg.device_price_multiplier)
     bid_dev = np.repeat(np.array([devices[v] for v in viewer.tolist()], dtype=object), n_bids)
-    cpm = np.round(base * adv_mult[adv] * np.array([dev_mult[d] for d in bid_dev]), 4)
+    cpm = np.round(base * np.array([dev_mult[d] for d in bid_dev]), 4)
 
     creatives: dict[tuple[int, int], Creative] = {}
     offsets = np.concatenate([[0], np.cumsum(n_bids)])

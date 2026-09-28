@@ -18,7 +18,7 @@ OVERSOLD_URGENCY = 100.0
 class UrgencyCurve:
     """urgency(s) = s ** exponent for s in [0, 1). Higher exponent = flatter early, steeper late."""
 
-    exponent: float = 1.0
+    exponent: float = 0.5
 
     def __call__(self, share: float) -> float:
         if share >= 1.0:
