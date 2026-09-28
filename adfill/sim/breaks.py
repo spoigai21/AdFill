@@ -28,7 +28,10 @@ def make_breaks(
     devices: dict[int, str],
     cfg: SimConfig,
     salt: int,
+    unsafe: dict[str, frozenset[int]] | None = None,
+    stats: dict | None = None,
 ) -> list[Break]:
+    """`unsafe` (category -> refused titles) drops bids that brand safety forbids, after all draws."""
     rng = np.random.default_rng([cfg.seed, 0xB4EA, salt])
 
     n_per = _choice(rng, cfg.breaks_per_session, len(sessions))
@@ -69,11 +72,16 @@ def make_breaks(
     creatives: dict[tuple[int, int], Creative] = {}
     offsets = np.concatenate([[0], np.cumsum(n_bids)])
     breaks: list[Break] = []
+    refused = 0
     for i in range(len(idx)):
         bid_id = f"{salt}-{i}"
         bids = []
+        tt = int(title[i])
         for j in range(offsets[i], offsets[i + 1]):
             a, d = int(adv[j]), int(dur[j])
+            if unsafe is not None and tt in unsafe[CATEGORIES[adv_cat[a]]]:
+                refused += 1
+                continue
             cr = creatives.get((a, d))
             if cr is None:
                 cr = creatives[(a, d)] = Creative(f"p{a}-{d}", d)
@@ -85,4 +93,7 @@ def make_breaks(
                   int(t[i]), int(length[i]), tuple(bids))
         )
     breaks.sort(key=lambda b: (b.t, b.id))
+    if stats is not None:
+        stats["bids_total"] = stats.get("bids_total", 0) + total
+        stats["bids_refused"] = stats.get("bids_refused", 0) + refused
     return breaks

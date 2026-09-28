@@ -52,6 +52,11 @@ class SimConfig:
     genres_per_campaign_range: tuple[int, int] = (1, 3)
     device_targeted_share: float = 0.4  # targeted campaigns buy TV only
 
+    # content (Phase 2): "genre" or "semantic" (tag-genome briefs) targeting; brand safety
+    # "off", "on" (rules known when deals are sized) or "after_booking" (sized without, enforced anyway)
+    targeting_mode: str = "genre"
+    brand_safety: str = "off"
+
     # allocation
     urgency_exponent: float = 0.5  # chosen on tuning windows only; see spec/BUG_LOG.md B6
     pod_tolerance_s: int = 0

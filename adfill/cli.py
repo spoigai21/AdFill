@@ -18,6 +18,7 @@ def _campaign_rows(campaigns) -> list[dict]:
     return [
         {"id": c.id, "category": c.category, "goal": c.goal, "start": c.start, "end": c.end,
          "genres": sorted(c.targeting.genres) if c.targeting.genres else None,
+         "brief": c.targeting.brief, "blocked_titles": len(c.targeting.blocked),
          "devices": sorted(c.targeting.devices) if c.targeting.devices else None,
          "cpm": c.cpm, "makegood_cpm": c.makegood_cpm,
          "durations_s": [cr.duration_s for cr in c.creatives]}
@@ -28,7 +29,8 @@ def _campaign_rows(campaigns) -> list[dict]:
 def cmd_run(args: argparse.Namespace) -> None:
     cfg = SimConfig(seed=args.seed, urgency_exponent=args.urgency_exponent, makegood_ratio=args.makegood_ratio,
                     price_source=args.price_source, bid_cpm_median=args.bid_cpm_median,
-                    rate_model=args.rate_model, rate_inflation=args.rate_inflation)
+                    rate_model=args.rate_model, rate_inflation=args.rate_inflation,
+                    targeting_mode=args.targeting_mode, brand_safety=args.brand_safety)
     if args.source == "movielens":
         start = int(datetime.fromisoformat(args.start).replace(tzinfo=timezone.utc).timestamp())
         world = movielens_world(Path(args.ml_dir), cfg, start, args.days, args.history_days, args.viewer_fraction)
@@ -62,7 +64,9 @@ def cmd_sweep(args: argparse.Namespace) -> None:
     out = run_sweep(args.name, args.windows, args.seeds, args.exponents, args.makegood_ratios, args.ml_dir,
                     args.run_dir, args.days, args.history_days, args.workers,
                     {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median,
-                     "rate_model": args.rate_model, "rate_inflation": args.rate_inflation})
+                     "rate_model": args.rate_model, "rate_inflation": args.rate_inflation,
+                     "targeting_mode": args.targeting_mode, "brand_safety": args.brand_safety,
+                     "guaranteed_book_share": args.book_share})
     print(out.with_suffix(".md").read_text())
 
 
@@ -92,6 +96,15 @@ def cmd_train_models(args: argparse.Namespace) -> None:
     print(json.dumps(run(seed=args.seed, train_rows=args.train_rows), indent=1))
 
 
+def cmd_content(args: argparse.Namespace) -> None:
+    from adfill.report.content import measure
+
+    result = measure(Path(args.ml_dir), args.windows, args.seeds, args.days, args.history_days)
+    out = Path("results") / f"{args.name}.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps(result, indent=1))
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="adfill")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -110,6 +123,8 @@ def main() -> None:
     r.add_argument("--bid-cpm-median", type=float, default=18.0)
     r.add_argument("--rate-model", choices=["constant", "logistic_hashed", "gbm", "logistic_hashed_raw", "gbm_raw", "oracle"], default="gbm")
     r.add_argument("--rate-inflation", type=float, default=1.0)
+    r.add_argument("--targeting-mode", choices=["genre", "semantic"], default="genre")
+    r.add_argument("--brand-safety", choices=["off", "on", "after_booking"], default="off")
     r.add_argument("--run-dir", default="data/runs")
     r.set_defaults(func=cmd_run)
 
@@ -127,6 +142,9 @@ def main() -> None:
     w.add_argument("--bid-cpm-median", type=float, default=18.0)
     w.add_argument("--rate-model", choices=["constant", "logistic_hashed", "gbm", "logistic_hashed_raw", "gbm_raw", "oracle"], default="gbm")
     w.add_argument("--rate-inflation", type=float, default=1.0)
+    w.add_argument("--targeting-mode", choices=["genre", "semantic"], default="genre")
+    w.add_argument("--brand-safety", choices=["off", "on", "after_booking"], default="off")
+    w.add_argument("--book-share", type=float, default=0.4, help="share of forecast ad slots sold as guaranteed")
     w.add_argument("--run-dir", default="data/runs")
     w.set_defaults(func=cmd_sweep)
 
@@ -142,6 +160,15 @@ def main() -> None:
     m.add_argument("--seed", type=int, default=1)
     m.add_argument("--train-rows", type=int, default=4_000_000)
     m.set_defaults(func=cmd_train_models)
+
+    k = sub.add_parser("content", help="brand-safety refusal and semantic-vs-genre forecast accuracy")
+    k.add_argument("--name", default="content-2018")
+    k.add_argument("--windows", nargs="+", default=["2018-03-01", "2018-09-01"])
+    k.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
+    k.add_argument("--days", type=int, default=30)
+    k.add_argument("--history-days", type=int, default=14)
+    k.add_argument("--ml-dir", default="data/ml-25m")
+    k.set_defaults(func=cmd_content)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

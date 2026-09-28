@@ -14,7 +14,7 @@ from collections.abc import Iterable
 from adfill.core.eligibility import matches_targeting
 from adfill.core.model import SECONDS_PER_DAY, Break, Campaign
 
-Key = tuple[frozenset[str], str]
+Key = tuple[int, frozenset[str], str]  # (title, genres, device)
 
 
 class NaiveForecast:
@@ -22,7 +22,7 @@ class NaiveForecast:
         if trailing_days <= 0:
             raise ValueError("trailing_days must be positive")
         self.trailing_days = trailing_days
-        # Counts per (genres, device) per completed day: far fewer keys than breaks.
+        # Counts per (title, genres, device) per completed day: far fewer keys than breaks.
         self._days: deque[tuple[int, Counter[Key]]] = deque()
         self._total: Counter[Key] = Counter()  # sum of self._days
         self._today: tuple[int, Counter[Key]] | None = None
@@ -46,7 +46,7 @@ class NaiveForecast:
         self._roll_to(day)
         if self._today is None:
             self._today = (day, Counter())
-        self._today[1][(brk.genres, brk.device)] += 1
+        self._today[1][(brk.title, brk.genres, brk.device)] += 1
 
     def daily_rate(self, campaign: Campaign, now: int) -> float:
         day = now // SECONDS_PER_DAY
@@ -57,8 +57,8 @@ class NaiveForecast:
         if rate is None:
             n = sum(
                 k
-                for (genres, device), k in self._total.items()
-                if matches_targeting(campaign.targeting, genres, device)
+                for (title, genres, device), k in self._total.items()
+                if matches_targeting(campaign.targeting, genres, device, title)
             )
             rate = self._rates[campaign.id] = n / self.trailing_days
         return rate

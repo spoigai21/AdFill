@@ -69,3 +69,14 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 | "Conversion" is the dataset's `conversion` label (a conversion within 30 days of the impression) | 4.84% on test days | Real label; several impressions can share one conversion. |
 | The Criteo user and outcome are independent of the simulated video context (title, device) | — | The datasets do not link. Stated as a limitation. |
 | Row sampling does not depend on the rate model | — | Every model is compared on identical impressions and outcomes. |
+
+## Content (Phase 2)
+
+| Rule | Value | Why |
+|---|---|---|
+| Semantic brief = 3 genome tags; a title matches if their mean relevance ≥ 0.5 | 10 briefs, `adfill/content/rules.py` | Advertisers buy mood and context, not genre. Briefs match 244–1,933 of 13,816 titles. |
+| In semantic worlds, a genre-targeted deal buys one brief instead | same 70% targeted share | Keeps the book otherwise identical to genre worlds. |
+| Brand safety = per-category tag thresholds plus a floor for every advertiser (gore ≥ 0.8, sexualised violence, child abuse, rape ≥ 0.6) | `SAFETY_RULES` | Chosen, not measured. Airline-style categories refuse disaster and terrorism; pharma refuses suicide, depression, drug abuse, cancer. |
+| A title with no genome scores is refused wherever safety applies | 4.3% of 2018 ratings | Unverifiable inventory is refused, as brand-safety vendors do. |
+| Safety applies to programmatic bids by the bidder's category as well as to guaranteed deals | — | A buyer's rules follow it into the open market. |
+| `after_booking`: deals sized without the rules, then the rules enforced | — | Isolates what knowing the rules at booking time is worth. |

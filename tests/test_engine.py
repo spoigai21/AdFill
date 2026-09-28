@@ -84,3 +84,13 @@ def test_book_is_sized_to_capacity(world):
     breaks = len(world.breaks)
     slots = breaks * (sum(b.length_s for b in world.breaks) / breaks) / 22.5
     assert 0.25 * slots < promised < 0.6 * slots
+
+
+def test_genre_deals_do_not_depend_on_the_brief_library(monkeypatch):
+    """Regression (BUG_LOG B7): the semantic-brief draw must not shift the genre deals' random stream."""
+    import adfill.sim.deals as deals
+
+    kw = dict(window_days=10, history_days=5, n_viewers=300, sessions_per_day=200)
+    before = synthetic_world(CFG, **kw).campaigns
+    monkeypatch.setattr(deals, "BRIEFS", {"only_one": ("funny",)})
+    assert synthetic_world(CFG, **kw).campaigns == before

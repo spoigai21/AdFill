@@ -108,21 +108,27 @@ This is where machine learning enters, and it is load-bearing rather than decora
 
 - **For programmatic**, the predicted rate scales the bid — so allocation quality depends directly on
   the model.
-- **For guaranteed**, it decides *which* eligible impressions to spend a promise on. Two impressions
-  both satisfy a drama deal; the model says which one the advertiser would rather have. That is how a
-  campaign hits its goal *and* performs.
+- **For guaranteed**, it would decide *which* eligible impressions to spend a promise on. **Not built:**
+  no public dataset carries outcomes for guaranteed video impressions, so any such model would be
+  trained on labels this project invented.
 - **For pods in video specifically**, a predicted **completion rate** per creative and pod position
-  orders the pod — viewers abandon long breaks, and a later slot is worth less than an earlier one.
+  would order the pod. **Not built, for the same reason:** there is no public ad-completion data, and a
+  completion model fitted to a synthesized decay curve would only recover the curve.
 
-**Calibration matters more than ranking accuracy here, and the reason is structural.** The predicted
-rate is multiplied into the value, so a model that ranks perfectly but is 30% too high inflates every
-value, distorts the comparison against guaranteed skip-costs, and corrupts pacing — which then
-over- or under-delivers. A well-ordered but miscalibrated probability is worse than useless in a system
-that *multiplies* by it.
+**Calibration was expected to matter more than ranking accuracy, because the predicted rate is
+multiplied into the value.** Measured, the picture is sharper (Phase 2 results in the README):
 
-So the model is evaluated on **calibration ratio** (mean predicted ÷ mean observed), expected
-calibration error, and log loss — with AUC reported last, if at all. Splits are **time-forward**, never
-random.
+- **Ranking earns the money.** Scaling every prediction by the same factor cannot reorder bids against
+  each other, so among programmatic demand only ranking matters. Moving from a per-campaign constant to
+  a gradient-boosted model is worth +7.8% revenue at identical delivery.
+- **Scale decides where on the revenue-versus-promises frontier the allocator lands.** A uniformly
+  inflated rate overvalues cash against guarantees. With slack in the book it is nearly free; when the
+  book is tight it is not: at a $36 median bid, +30% inflation changed revenue by +0.1% but cut campaigns
+  delivered in full from 232 to 208 of 240. Revenue alone would have hidden the damage; the headline
+  pair (§8) catches it.
+
+The model is still evaluated on **calibration ratio** (mean predicted ÷ mean observed), expected
+calibration error and log loss, with AUC reported alongside. Splits are **time-forward**, never random.
 
 ### 2.4 Why targeting width matters, and falls out for free
 
@@ -236,9 +242,11 @@ thresholds a title must not exceed, and they matter structurally because **refus
 supply in §2.2** — which raises `required_win_share`, which raises the price of every affected promise.
 Safety is not a filter bolted on the side; it propagates into the allocation.
 
-**Measure:** predicted action rate under semantic matching versus genre matching; the share of inventory
-removed by safety rules and its effect on delivery; and whether the avails forecast becomes more
-accurate when eligibility is semantic rather than categorical.
+**Measure:** the share of inventory removed by safety rules and its effect on revenue and delivery; and
+whether the avails forecast becomes more accurate when eligibility is semantic rather than categorical.
+Predicted action rate under semantic versus genre matching is **not measured**: the conversion labels
+(Criteo) and the content (MovieLens) come from unrelated datasets, so no response to content exists to
+measure.
 
 ---
 
@@ -352,7 +360,7 @@ pair, and the pod solver is verified against brute force on small catalogues.
 greedy-versus-exact pod quality and the per-decision cost breakdown are in the README; every figure
 has a row in `NUMBERS.md`.
 
-### Phase 2 — prediction, contextual targeting, and brand safety
+### Phase 2 — prediction, contextual targeting, and brand safety — **done**
 
 A calibrated action-rate model feeding the value computation in §2.3, plus a completion-rate model for
 pod ordering. Time-forward splits. Compare a hashed logistic-regression baseline against a gradient-
@@ -365,6 +373,9 @@ refusal rules feeding back into matching supply.
 future period; the headline pair is re-measured with the model in place versus a constant-rate
 stand-in, showing what the model is worth in revenue and delivery terms; and semantic eligibility is
 compared against genre matching with the cost of brand-safety refusals quantified.
+
+**Status: done.** The completion-rate model is cut (§2.3: no public data). Results in the README; every
+figure in `NUMBERS.md`.
 
 ### Phase 3 — forecasting and avails
 

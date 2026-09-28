@@ -21,10 +21,17 @@ class Creative:
 
 @dataclass(frozen=True, slots=True)
 class Targeting:
-    """None on a dimension means unrestricted."""
+    """None on a dimension means unrestricted.
+
+    `titles` is an allow-list (a semantic brief resolved to titles); `blocked` is a deny-list (brand
+    safety). Both are resolved before the run so eligibility stays a set lookup.
+    """
 
     genres: frozenset[str] | None = None
     devices: frozenset[str] | None = None
+    titles: frozenset[int] | None = None
+    blocked: frozenset[int] = frozenset()
+    brief: str | None = None  # name of the semantic brief behind `titles`, for reporting
 
 
 @dataclass(frozen=True, slots=True)
