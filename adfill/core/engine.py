@@ -1,0 +1,100 @@
+"""The request path (SPEC §7): eligibility -> caps -> price -> compare -> pod.
+
+Holds delivery counters and ad-load state, but does no I/O; the caller records each Decision.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum
+
+from adfill.core.caps import AdLoadTracker
+from adfill.core.eligibility import eligible
+from adfill.core.model import Break, Campaign, Candidate, Kind
+from adfill.core.pod import Pod, solve_exact
+from adfill.core.urgency import UrgencyCurve, required_win_share
+from adfill.forecast.base import SupplyForecast
+
+
+class Policy(str, Enum):
+    ADFILL = "adfill"
+    GUARANTEED_FIRST = "guaranteed_first"
+    HIGHEST_BID = "highest_bid"
+
+
+# Guaranteed-first: any guaranteed ad outranks any bid, and among guaranteed ads the one furthest behind
+# wins. Highest-bid: guaranteed ads only take slots no bid wants. Both are expressed as values so all
+# three policies share one pod solver.
+_GUARANTEED_FIRST_VALUE = 1e3
+_HIGHEST_BID_LEFTOVER_VALUE = 1e-6
+
+
+@dataclass(frozen=True)
+class Decision:
+    brk: Break
+    length_s: int  # after the ad-load cap
+    pod: Pod
+    underfilled: bool  # no exact fit existed; the gap goes to house promos
+
+
+class Engine:
+    def __init__(
+        self,
+        policy: Policy,
+        campaigns: list[Campaign],
+        forecast: SupplyForecast,
+        curve: UrgencyCurve = UrgencyCurve(),
+        ad_load: AdLoadTracker | None = None,
+        tolerance_s: int = 0,
+    ):
+        self.policy = policy
+        self.campaigns = campaigns
+        self.forecast = forecast
+        self.curve = curve
+        self.ad_load = ad_load
+        self.tolerance_s = tolerance_s
+        self.delivered: dict[str, int] = {c.id: 0 for c in campaigns}
+
+    def guaranteed_value(self, campaign: Campaign, now: int) -> float:
+        if self.policy is Policy.HIGHEST_BID:
+            return _HIGHEST_BID_LEFTOVER_VALUE
+        debt = campaign.goal - self.delivered[campaign.id]
+        share = required_win_share(debt, self.forecast.matching_supply(campaign, now))
+        if self.policy is Policy.GUARANTEED_FIRST:
+            return _GUARANTEED_FIRST_VALUE + min(share, 10.0)
+        return campaign.skip_cost_per_imp * self.curve(share)
+
+    def candidates(self, brk: Break) -> list[Candidate]:
+        out: list[Candidate] = []
+        for c in self.campaigns:
+            if self.delivered[c.id] >= c.goal or not eligible(c, brk):
+                continue
+            value = self.guaranteed_value(c, brk.t)
+            for cr in c.creatives:
+                out.append(
+                    Candidate(Kind.GUARANTEED, c.id, c.advertiser, c.category, cr.duration_s, value, c.cpm)
+                )
+        for b in brk.bids:
+            out.append(
+                Candidate(
+                    Kind.PROGRAMMATIC, b.id, b.advertiser, b.category, b.creative.duration_s, b.cpm / 1000, b.cpm
+                )
+            )
+        return out
+
+    def decide(self, brk: Break) -> Decision:
+        self.forecast.observe(brk)
+        length = brk.length_s
+        if self.ad_load is not None:
+            length = min(length, self.ad_load.remaining(brk.viewer, brk.t))
+        cands = self.candidates(brk)
+        pod = solve_exact(cands, length, self.tolerance_s)
+        underfilled = pod is None
+        if pod is None:
+            pod = solve_exact(cands, length, tolerance=length)
+        for item in pod.items:
+            if item.kind is Kind.GUARANTEED:
+                self.delivered[item.ref] += 1
+        if self.ad_load is not None:
+            self.ad_load.record(brk.viewer, brk.t, pod.duration_s)
+        return Decision(brk, length, pod, underfilled)
