@@ -14,6 +14,7 @@ import numpy as np
 from adfill.core.model import SECONDS_PER_DAY, Campaign, Creative, Targeting
 from adfill.content.index import ContentIndex
 from adfill.content.rules import BRIEFS
+from adfill.forecast.avails import Avails
 from adfill.forecast.base import SupplyForecast
 from adfill.sim.config import CATEGORIES, SimConfig
 
@@ -26,6 +27,8 @@ def make_campaigns(
     window_days: int,
     slots_per_break: float,
     content: ContentIndex | None = None,
+    effective_slots: float | None = None,
+    stats: dict | None = None,
 ) -> list[Campaign]:
     """`content` is required for semantic targeting or brand safety."""
     if (cfg.targeting_mode == "semantic" or cfg.brand_safety != "off") and content is None:
@@ -75,6 +78,31 @@ def make_campaigns(
     capacity = forecast.matching_supply(everything, window_start) * slots_per_break
     scale = cfg.guaranteed_book_share * capacity / max(1.0, sum(w for _, w in drafts))
     out = [replace(c, goal=int(w * scale)) for c, w in drafts if int(w * scale) > 0]
+    requested = sum(c.goal for c in out)
+    if cfg.avails_check:
+        out = _check_avails(out, cfg, forecast, window_start, window_days, effective_slots or slots_per_break, stats)
+    if stats is not None:
+        stats["requested_impressions"] = requested
+        stats["booked_impressions"] = sum(c.goal for c in out)
     if cfg.brand_safety == "after_booking":  # sized as if unrestricted, then the rules arrive
         out = [replace(c, targeting=replace(c.targeting, blocked=content.unsafe[c.category])) for c in out]
     return out
+
+
+def _check_avails(proposed: list[Campaign], cfg: SimConfig, forecast, window_start: int, window_days: int,
+                  slots: float, stats: dict | None) -> list[Campaign]:
+    """Sell deals in order; each gets what avails can still deliver, or is refused if that is too little."""
+    avails = Avails(forecast, window_start, window_days, slots, cfg.avails_margin, cfg.booking_forecast_bias)
+    booked, trimmed, refused = [], 0, 0
+    for c in proposed:
+        can = min(c.goal, avails.deliverable(c))
+        if can < cfg.avails_min_fill * c.goal:
+            refused += 1
+            continue
+        trimmed += int(can < c.goal)
+        c = replace(c, goal=int(can))
+        avails.booked.append(c)
+        booked.append(c)
+    if stats is not None:
+        stats["deals_trimmed"], stats["deals_refused"] = trimmed, refused
+    return booked

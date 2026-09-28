@@ -11,7 +11,10 @@ import pandas as pd
 
 from adfill.content.index import ContentIndex, content_index
 from adfill.core.model import SECONDS_PER_DAY, Break, Campaign
+from adfill.core.caps import AdLoadTracker
 from adfill.forecast.naive import NaiveForecast
+from adfill.forecast.seasonal import SeasonalForecast
+from adfill.forecast.wrappers import Biased, ContentionAdjusted
 from adfill.sim.breaks import make_breaks, viewer_devices
 from adfill.sim.config import SimConfig
 from adfill.sim.deals import make_campaigns
@@ -28,9 +31,28 @@ class World:
     history_days: int
     stats: dict = field(default_factory=dict)
 
-    def make_forecast(self) -> NaiveForecast:
+    def make_forecast(self, model: str = "naive", contention: bool = False, bias: float = 1.0):
         """A fresh forecast primed on history. Forecasts learn as they run, so each run needs its own."""
-        return NaiveForecast(self.history, self.history_days)
+        if model == "naive":
+            f = NaiveForecast(self.history, self.history_days)
+        elif model == "seasonal":
+            f = SeasonalForecast(self.history, self.history_days)
+        else:
+            raise ValueError(f"unknown forecast model {model!r}")
+        if contention:
+            f = ContentionAdjusted(f, self.campaigns, self.stats["effective_slots_per_break"])
+        return Biased(f, bias) if bias != 1.0 else f
+
+
+def effective_slots_per_break(history: list[Break], cfg: SimConfig, mean_creative_s: float) -> float:
+    """Ads a break really holds once the ad-load cap bites, measured on history assuming full fill."""
+    tracker = AdLoadTracker(cfg.max_ad_seconds_per_hour)
+    total = 0
+    for b in history:
+        s = min(b.length_s, tracker.remaining(b.viewer, b.t))
+        tracker.record(b.viewer, b.t, s)
+        total += s
+    return total / max(1, len(history)) / mean_creative_s
 
 
 def _assemble(sessions: pd.DataFrame, titles, cfg: SimConfig, window_start: int, window_days: int,
@@ -46,7 +68,9 @@ def _assemble(sessions: pd.DataFrame, titles, cfg: SimConfig, window_start: int,
     genre_pool = [g for g, _ in genre_counts.most_common(12)]
     mean_creative_s = sum(d * w for d, w in cfg.creative_durations_s) / sum(w for _, w in cfg.creative_durations_s)
     slots_per_break = sum(b.length_s for b in history) / max(1, len(history)) / mean_creative_s
-    campaigns = make_campaigns(cfg, forecast, genre_pool, window_start, window_days, slots_per_break, content)
+    stats["effective_slots_per_break"] = effective_slots_per_break(history, cfg, mean_creative_s)
+    campaigns = make_campaigns(cfg, forecast, genre_pool, window_start, window_days, slots_per_break, content,
+                               stats["effective_slots_per_break"], stats)
     return World(history, breaks, campaigns, window_start, window_days, history_days, stats)
 
 

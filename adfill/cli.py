@@ -66,7 +66,10 @@ def cmd_sweep(args: argparse.Namespace) -> None:
                     {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median,
                      "rate_model": args.rate_model, "rate_inflation": args.rate_inflation,
                      "targeting_mode": args.targeting_mode, "brand_safety": args.brand_safety,
-                     "guaranteed_book_share": args.book_share})
+                     "guaranteed_book_share": args.book_share, "forecast_model": args.forecast_model,
+                     "forecast_contention": args.contention, "forecast_bias": args.forecast_bias,
+                     "avails_check": args.avails, "avails_margin": args.avails_margin,
+                     "booking_forecast_bias": args.booking_bias})
     print(out.with_suffix(".md").read_text())
 
 
@@ -100,6 +103,25 @@ def cmd_content(args: argparse.Namespace) -> None:
     from adfill.report.content import measure
 
     result = measure(Path(args.ml_dir), args.windows, args.seeds, args.days, args.history_days)
+    out = Path("results") / f"{args.name}.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps(result, indent=1))
+
+
+def cmd_forecast(args: argparse.Namespace) -> None:
+    from adfill.report.forecast import validate
+
+    cfg = SimConfig(price_source="criteo-cpa", rate_model="gbm")
+    result = validate(Path(args.ml_dir), args.windows, args.seeds, args.days, args.history_days, cfg)
+    out = Path("results") / f"{args.name}.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps(result, indent=1))
+
+
+def cmd_winrate(args: argparse.Namespace) -> None:
+    from adfill.report.winrate import run
+
+    result = run(Path(args.ml_dir), args.windows, args.seeds, args.per_world, args.bid_median, args.bid_sigma)
     out = Path("results") / f"{args.name}.json"
     out.write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps(result, indent=1))
@@ -145,6 +167,12 @@ def main() -> None:
     w.add_argument("--targeting-mode", choices=["genre", "semantic"], default="genre")
     w.add_argument("--brand-safety", choices=["off", "on", "after_booking"], default="off")
     w.add_argument("--book-share", type=float, default=0.4, help="share of forecast ad slots sold as guaranteed")
+    w.add_argument("--forecast-model", choices=["naive", "seasonal"], default="naive")
+    w.add_argument("--contention", action="store_true", help="discount supply by overlapping campaigns")
+    w.add_argument("--forecast-bias", type=float, default=1.0, help="multiply the allocator's forecast")
+    w.add_argument("--avails", action="store_true", help="trim or refuse deals that would oversell")
+    w.add_argument("--avails-margin", type=float, default=0.1)
+    w.add_argument("--booking-bias", type=float, default=1.0, help="multiply supply as seen at booking")
     w.add_argument("--run-dir", default="data/runs")
     w.set_defaults(func=cmd_sweep)
 
@@ -169,6 +197,25 @@ def main() -> None:
     k.add_argument("--history-days", type=int, default=14)
     k.add_argument("--ml-dir", default="data/ml-25m")
     k.set_defaults(func=cmd_content)
+
+    f = sub.add_parser("forecast", help="validate naive vs seasonal forecasts on held-out periods")
+    f.add_argument("--name", default="forecast-2018")
+    f.add_argument("--windows", nargs="+", default=["2018-03-01", "2018-09-01"])
+    f.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
+    f.add_argument("--days", type=int, default=30)
+    f.add_argument("--history-days", type=int, default=14)
+    f.add_argument("--ml-dir", default="data/ml-25m")
+    f.set_defaults(func=cmd_forecast)
+
+    v = sub.add_parser("winrate", help="win-rate curve from censored feedback: winners-only vs Kaplan-Meier")
+    v.add_argument("--name", default="winrate-2018")
+    v.add_argument("--windows", nargs="+", default=["2018-03-01", "2018-09-01"])
+    v.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
+    v.add_argument("--per-world", type=int, default=1500)
+    v.add_argument("--bid-median", type=float, default=18.0, help="buyer's median bid, $ CPM")
+    v.add_argument("--bid-sigma", type=float, default=0.5)
+    v.add_argument("--ml-dir", default="data/ml-25m")
+    v.set_defaults(func=cmd_winrate)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

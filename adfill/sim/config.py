@@ -57,6 +57,18 @@ class SimConfig:
     targeting_mode: str = "genre"
     brand_safety: str = "off"
 
+    # forecast used by the allocator (Phase 3): "naive" or "seasonal"; optional contention adjustment;
+    # a deliberate bias factor for the wrong-forecast experiment
+    forecast_model: str = "naive"
+    forecast_contention: bool = False
+    forecast_bias: float = 1.0
+
+    # booking (Phase 3): check each deal against avails and trim or refuse what would oversell
+    avails_check: bool = False
+    avails_margin: float = 0.1  # capacity held back against forecast error
+    avails_min_fill: float = 0.2  # refuse a deal outright if less than this share of the ask fits
+    booking_forecast_bias: float = 1.0  # misstate supply at booking, for the wrong-forecast experiment
+
     # allocation
     urgency_exponent: float = 0.5  # chosen on tuning windows only; see spec/BUG_LOG.md B6
     pod_tolerance_s: int = 0

@@ -1,0 +1,33 @@
+{
+ "windows": [
+  "2018-03-01",
+  "2018-09-01"
+ ],
+ "seeds": [
+  1,
+  2,
+  3
+ ],
+ "breaks_sampled": 9000,
+ "never_winnable_share": 0.2182,
+ "free_slot_share": 0.1039,
+ "threshold_median_cpm": 15.11,
+ "buyer_bids": {
+  "median_cpm": 18.0,
+  "sigma": 0.5
+ },
+ "win_rate_observed": 0.4922,
+ "winners_only": {
+  "max_abs_error": 0.3399,
+  "mean_abs_error": 0.295,
+  "bid_for_50pct_cpm": 10.98,
+  "true_win_rate_at_that_bid": 0.2556
+ },
+ "kaplan_meier": {
+  "max_abs_error": 0.0084,
+  "mean_abs_error": 0.0025,
+  "bid_for_50pct_cpm": 17.59,
+  "true_win_rate_at_that_bid": 0.5064
+ },
+ "true_bid_for_50pct_cpm": 17.59
+}

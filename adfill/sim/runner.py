@@ -35,7 +35,7 @@ def run_policy(world: World, policy: Policy, cfg: SimConfig, log_path: Path) -> 
     engine = Engine(
         policy,
         world.campaigns,
-        world.make_forecast(),
+        world.make_forecast(cfg.forecast_model, cfg.forecast_contention, cfg.forecast_bias),
         UrgencyCurve(cfg.urgency_exponent),
         AdLoadTracker(cfg.max_ad_seconds_per_hour),
         cfg.pod_tolerance_s,

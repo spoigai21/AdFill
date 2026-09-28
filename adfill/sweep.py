@@ -35,7 +35,7 @@ def run_world(task: dict) -> list[dict]:
         h, _ = headline(log, _with_penalty(world.campaigns, ratio))
         rows.append({"window": task["window"], "seed": task["seed"], "policy": policy.value,
                      "exponent": exponent, "makegood_ratio": ratio, "us_per_decision": round(us, 1),
-                     **h.to_dict()})
+                     **h.to_dict(), "world": dict(world.stats)})
 
     for policy in (Policy.GUARANTEED_FIRST, Policy.HIGHEST_BID):
         log = base / f"{policy.value}.jsonl"

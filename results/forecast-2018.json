@@ -1,0 +1,63 @@
+{
+ "windows": [
+  "2018-03-01",
+  "2018-09-01"
+ ],
+ "seeds": [
+  1,
+  2,
+  3
+ ],
+ "remaining_supply_median_ape_by_days_left": {
+  "naive": {
+   "1-3": {
+    "median_ape": 0.2044,
+    "n": 720
+   },
+   "4-7": {
+    "median_ape": 0.1135,
+    "n": 960
+   },
+   "8-14": {
+    "median_ape": 0.0722,
+    "n": 1680
+   },
+   "15-60": {
+    "median_ape": 0.0659,
+    "n": 1932
+   }
+  },
+  "seasonal": {
+   "1-3": {
+    "median_ape": 0.1199,
+    "n": 720
+   },
+   "4-7": {
+    "median_ape": 0.0752,
+    "n": 960
+   },
+   "8-14": {
+    "median_ape": 0.0615,
+    "n": 1680
+   },
+   "15-60": {
+    "median_ape": 0.0695,
+    "n": 1932
+   }
+  }
+ },
+ "horizon_mape": {
+  "naive": {
+   "1d_breaks": 0.2084,
+   "1d_spend": 0.2187,
+   "3d_breaks": 0.1517,
+   "3d_spend": 0.1567
+  },
+  "seasonal": {
+   "1d_breaks": 0.1102,
+   "1d_spend": 0.1189,
+   "3d_breaks": 0.0749,
+   "3d_spend": 0.0797
+  }
+ }
+}
