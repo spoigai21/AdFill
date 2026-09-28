@@ -69,7 +69,8 @@ def cmd_sweep(args: argparse.Namespace) -> None:
                      "guaranteed_book_share": args.book_share, "forecast_model": args.forecast_model,
                      "forecast_contention": args.contention, "forecast_bias": args.forecast_bias,
                      "avails_check": args.avails, "avails_margin": args.avails_margin,
-                     "booking_forecast_bias": args.booking_bias})
+                     "booking_forecast_bias": args.booking_bias, "reach_share": args.reach_share,
+                     "freq_cap": args.freq_cap})
     print(out.with_suffix(".md").read_text())
 
 
@@ -173,6 +174,8 @@ def main() -> None:
     w.add_argument("--avails", action="store_true", help="trim or refuse deals that would oversell")
     w.add_argument("--avails-margin", type=float, default=0.1)
     w.add_argument("--booking-bias", type=float, default=1.0, help="multiply supply as seen at booking")
+    w.add_argument("--reach-share", type=float, default=0.0, help="share of deals buying unique viewers")
+    w.add_argument("--freq-cap", type=int, default=0, help="ads per viewer per campaign per 24h; 0 = off")
     w.add_argument("--run-dir", default="data/runs")
     w.set_defaults(func=cmd_sweep)
 

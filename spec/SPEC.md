@@ -398,7 +398,7 @@ biased forecast is quantified.
 
 **Status: done.** Results in the README; every figure in `NUMBERS.md`.
 
-### Phase 4 — reach, frequency, and ad load
+### Phase 4 — reach, frequency, and ad load — **done**
 
 Per-viewer frequency caps, unique-reach tracking, frequency histograms, and reach-goal campaigns
 alongside impression-goal ones. The ad-load limit already enforced in Phase 1 (§3) is re-verified here
@@ -406,6 +406,9 @@ under duplicate and out-of-order delivery reports.
 
 **Done when:** reach and frequency are reported per campaign and cap violations are zero under
 duplicate delivery reports.
+
+**Status: done.** Caps are enforced on decisions; billing reconciles beacons by impression id and
+checks caps and ad load on serve time. Results in the README; every figure in `NUMBERS.md`.
 
 ### Phase 5 — the live-event spike
 

@@ -39,6 +39,7 @@ def run_policy(world: World, policy: Policy, cfg: SimConfig, log_path: Path) -> 
         UrgencyCurve(cfg.urgency_exponent),
         AdLoadTracker(cfg.max_ad_seconds_per_hour),
         cfg.pod_tolerance_s,
+        new_viewer_prior=world.stats.get("viewers_per_break", 0.5),
     )
     log_path.parent.mkdir(parents=True, exist_ok=True)
     spent = 0.0

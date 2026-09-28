@@ -95,3 +95,15 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 | Refused and trimmed demand does not come back | — | Stated as a limitation: in reality it may be sold later or elsewhere. |
 | Win-rate buyer bids lognormal, median $18 CPM, σ 0.5, independent of the threshold | — | Independence is what Kaplan–Meier requires; stated as its assumption. |
 | The buyer learns the exact threshold on a win, only "threshold > bid" on a loss | — | The feedback second-price-style reporting gives. |
+
+## Reach and frequency (Phase 4)
+
+| Rule | Value | Why |
+|---|---|---|
+| Frequency cap: ads per viewer per campaign in any trailing 24 h, the same for every deal | 0 (off), 1 or 3 | Common guaranteed-video caps. Enforced at decision time. |
+| A reach deal counts each viewer once and only competes for viewers it has not reached | — | Serving a reached viewer again pays nothing toward the goal. |
+| Reach goal = impression-sized weight × viewers per break in history | ~0.37 | Unique viewers available scale with matching breaks by the history's viewer/break ratio. |
+| New-viewer share for reach urgency: online count of matching breaks from unreached viewers, prior = history's viewers per break, weight 200 breaks | — | Reach supply shrinks as the audience saturates; the estimate follows it. |
+| Which deals buy reach | 25% in reach experiments, own random stream | Adding reach deals must not change the Phase 1–3 book (BUG_LOG B7). |
+| Delivery beacons: 5% duplicated, delayed uniformly 0–1 h, processed in arrival order | — | Shape of a real client-side reporting pipeline. |
+| Decisions, not beacons, drive pacing and caps | — | Beacons are for billing and audit; the decision path already knows what it served. |

@@ -24,3 +24,23 @@ class AdLoadTracker:
     def record(self, viewer: int, t: int, seconds: int) -> None:
         if seconds > 0:
             self._served[viewer].append((t, seconds))
+
+
+class FrequencyCaps:
+    """Per campaign and viewer: at most `cap` ads in any trailing `window_s`. Uncapped campaigns cost nothing."""
+
+    def __init__(self) -> None:
+        self._seen: dict[tuple[str, int], deque[int]] = defaultdict(deque)
+
+    def allowed(self, campaign_id: str, cap: int, window_s: int, viewer: int, t: int) -> bool:
+        if cap <= 0:
+            return True
+        q = self._seen.get((campaign_id, viewer))
+        if not q:
+            return True
+        while q and q[0] <= t - window_s:
+            q.popleft()
+        return len(q) < cap
+
+    def record(self, campaign_id: str, viewer: int, t: int) -> None:
+        self._seen[(campaign_id, viewer)].append(t)

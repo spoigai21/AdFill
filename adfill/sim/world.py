@@ -69,6 +69,7 @@ def _assemble(sessions: pd.DataFrame, titles, cfg: SimConfig, window_start: int,
     mean_creative_s = sum(d * w for d, w in cfg.creative_durations_s) / sum(w for _, w in cfg.creative_durations_s)
     slots_per_break = sum(b.length_s for b in history) / max(1, len(history)) / mean_creative_s
     stats["effective_slots_per_break"] = effective_slots_per_break(history, cfg, mean_creative_s)
+    stats["viewers_per_break"] = len({b.viewer for b in history}) / max(1, len(history))
     campaigns = make_campaigns(cfg, forecast, genre_pool, window_start, window_days, slots_per_break, content,
                                stats["effective_slots_per_break"], stats)
     return World(history, breaks, campaigns, window_start, window_days, history_days, stats)

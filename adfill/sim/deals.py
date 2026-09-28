@@ -36,6 +36,8 @@ def make_campaigns(
     briefs = sorted(BRIEFS)
     # Its own stream: adding semantic targeting must not change the genre-targeted deals of Phase 1.
     brief_rng = np.random.default_rng([cfg.seed, 0xB21E])
+    reach_rng = np.random.default_rng([cfg.seed, 0x4EAC])  # Phase 4 draws: own stream (see B7)
+    viewers_per_break = (stats or {}).get("viewers_per_break", 1.0)
     rng = np.random.default_rng([cfg.seed, 0xDEA1])
     drafts: list[tuple[Campaign, float]] = []
     for i in range(cfg.n_campaigns):
@@ -69,6 +71,10 @@ def make_campaigns(
             cpm=cpm,
             makegood_cpm=round(cpm * cfg.makegood_ratio, 2),
         )
+        if reach_rng.random() < cfg.reach_share:
+            c = replace(c, goal_type="reach")
+        if cfg.freq_cap:
+            c = replace(c, freq_cap=cfg.freq_cap, freq_window_s=cfg.freq_window_s)
         sell_through = float(rng.uniform(*cfg.sell_through_range))
         # Booked before the window opens: sized by what the forecast knew then.
         drafts.append((c, sell_through * forecast.matching_supply(c, window_start)))
@@ -77,7 +83,9 @@ def make_campaigns(
                           Targeting(), 0.0, 0.0)
     capacity = forecast.matching_supply(everything, window_start) * slots_per_break
     scale = cfg.guaranteed_book_share * capacity / max(1.0, sum(w for _, w in drafts))
-    out = [replace(c, goal=int(w * scale)) for c, w in drafts if int(w * scale) > 0]
+    # A reach deal sells unique viewers: its matching supply in viewers is breaks x viewers-per-break.
+    sized = [(c, w * scale * (viewers_per_break if c.goal_type == "reach" else 1.0)) for c, w in drafts]
+    out = [replace(c, goal=int(g)) for c, g in sized if int(g) > 0]
     requested = sum(c.goal for c in out)
     if cfg.avails_check:
         out = _check_avails(out, cfg, forecast, window_start, window_days, effective_slots or slots_per_break, stats)

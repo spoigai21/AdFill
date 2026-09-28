@@ -36,7 +36,12 @@ class Targeting:
 
 @dataclass(frozen=True, slots=True)
 class Campaign:
-    """A guaranteed deal: `goal` impressions between `start` and `end` (unix seconds)."""
+    """A guaranteed deal: `goal` impressions (or unique viewers) between `start` and `end` (unix seconds).
+
+    `goal_type` "impressions" counts every ad served; "reach" counts each viewer once, so the campaign
+    only competes for viewers it has not reached yet. `freq_cap` limits ads per viewer in any trailing
+    `freq_window_s`; 0 means uncapped.
+    """
 
     id: str
     advertiser: str
@@ -48,6 +53,9 @@ class Campaign:
     targeting: Targeting
     cpm: float
     makegood_cpm: float
+    goal_type: str = "impressions"
+    freq_cap: int = 0
+    freq_window_s: int = SECONDS_PER_DAY
 
     @property
     def skip_cost_per_imp(self) -> float:

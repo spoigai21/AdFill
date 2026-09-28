@@ -1,0 +1,1342 @@
+{
+ "meta": {
+  "windows": [
+   "2018-03-01",
+   "2018-09-01"
+  ],
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "exponents": [
+   0.5
+  ],
+  "makegood_ratios": [
+   1.0
+  ],
+  "days": 30,
+  "history_days": 14,
+  "config": {
+   "seed": 1,
+   "max_sessions_per_viewer_day": 3,
+   "breaks_per_session": [
+    [
+     1,
+     0.3
+    ],
+    [
+     2,
+     0.35
+    ],
+    [
+     3,
+     0.25
+    ],
+    [
+     4,
+     0.1
+    ]
+   ],
+   "break_lengths_s": [
+    [
+     30,
+     0.2
+    ],
+    [
+     60,
+     0.4
+    ],
+    [
+     90,
+     0.25
+    ],
+    [
+     120,
+     0.15
+    ]
+   ],
+   "break_spacing_s": 900,
+   "device_mix": [
+    [
+     "tv",
+     0.55
+    ],
+    [
+     "mobile",
+     0.2
+    ],
+    [
+     "desktop",
+     0.15
+    ],
+    [
+     "tablet",
+     0.1
+    ]
+   ],
+   "max_ad_seconds_per_hour": 240,
+   "price_source": "criteo-cpa",
+   "rate_model": "gbm",
+   "rate_inflation": 1.0,
+   "n_programmatic_advertisers": 60,
+   "bids_per_break_mean": 4.0,
+   "bid_cpm_median": 18.0,
+   "bid_cpm_sigma": 0.7,
+   "advertiser_price_sigma": 0.3,
+   "device_price_multiplier": [
+    [
+     "tv",
+     1.3
+    ],
+    [
+     "mobile",
+     0.8
+    ],
+    [
+     "desktop",
+     0.9
+    ],
+    [
+     "tablet",
+     0.9
+    ]
+   ],
+   "creative_durations_s": [
+    [
+     15,
+     0.5
+    ],
+    [
+     30,
+     0.5
+    ]
+   ],
+   "n_campaigns": 40,
+   "campaign_cpm_range": [
+    30.0,
+    50.0
+   ],
+   "makegood_ratio": 1.0,
+   "flight_days_range": [
+    14,
+    45
+   ],
+   "sell_through_range": [
+    0.05,
+    0.7
+   ],
+   "guaranteed_book_share": 0.4,
+   "genre_targeted_share": 0.7,
+   "genres_per_campaign_range": [
+    1,
+    3
+   ],
+   "device_targeted_share": 0.4,
+   "targeting_mode": "genre",
+   "brand_safety": "off",
+   "forecast_model": "naive",
+   "forecast_contention": false,
+   "forecast_bias": 1.0,
+   "avails_check": false,
+   "avails_margin": 0.1,
+   "avails_min_fill": 0.2,
+   "booking_forecast_bias": 1.0,
+   "reach_share": 0.25,
+   "freq_cap": 0,
+   "freq_window_s": 86400,
+   "urgency_exponent": 0.5,
+   "pod_tolerance_s": 0
+  }
+ },
+ "rows": [
+  {
+   "window": "2018-03-01",
+   "seed": 1,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 31.1,
+   "breaks": 37978,
+   "programmatic_revenue": 2003.83,
+   "guaranteed_revenue": 1337.31,
+   "makegood_liability": 0.0,
+   "total_revenue": 3341.14,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2671980,
+   "ad_seconds_filled": 1751070,
+   "underfilled_breaks": 6274,
+   "world": {
+    "bids_total": 152287,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2407363514260883,
+    "viewers_per_break": 0.10891206447025362,
+    "requested_impressions": 33486,
+    "booked_impressions": 33486
+   },
+   "reach": {
+    "impressions": 33486,
+    "reach": 12240,
+    "avg_frequency": 2.736,
+    "impressions_beyond_3rd_per_viewer_share": 0.2563,
+    "impression_share_by_frequency": {
+     "1": 0.1373,
+     "2": 0.1568,
+     "3": 0.1896,
+     "4-5": 0.2234,
+     "6-10": 0.2169,
+     "11+": 0.076
+    },
+    "violations_of_reference_cap": 4988,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 91844,
+    "true_impressions": 87423,
+    "reconciled": {
+     "impressions_counted": 87423,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 91844,
+     "overcount": 0.0506,
+     "campaigns_miscounted": 38,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1460
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 1,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 52.1,
+   "breaks": 37978,
+   "programmatic_revenue": 2633.56,
+   "guaranteed_revenue": 952.75,
+   "makegood_liability": 384.56,
+   "total_revenue": 3201.75,
+   "campaigns": 40,
+   "delivered_in_full": 20,
+   "delivered_in_full_share": 0.5,
+   "mean_delivery_share": 0.7154,
+   "ad_seconds_requested": 2671980,
+   "ad_seconds_filled": 1857255,
+   "underfilled_breaks": 568,
+   "world": {
+    "bids_total": 152287,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2407363514260883,
+    "viewers_per_break": 0.10891206447025362,
+    "requested_impressions": 33486,
+    "booked_impressions": 33486
+   },
+   "reach": {
+    "impressions": 23600,
+    "reach": 13641,
+    "avg_frequency": 1.73,
+    "impressions_beyond_3rd_per_viewer_share": 0.1424,
+    "impression_share_by_frequency": {
+     "1": 0.3865,
+     "2": 0.2067,
+     "3": 0.1201,
+     "4-5": 0.1266,
+     "6-10": 0.1097,
+     "11+": 0.0503
+    },
+    "violations_of_reference_cap": 229,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 9
+   },
+   "beacons": {
+    "beacons": 98272,
+    "true_impressions": 93546,
+    "reconciled": {
+     "impressions_counted": 93546,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 98272,
+     "overcount": 0.0505,
+     "campaigns_miscounted": 37,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1616
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 1,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 55.2,
+   "breaks": 37978,
+   "programmatic_revenue": 2517.21,
+   "guaranteed_revenue": 1337.31,
+   "makegood_liability": 0.0,
+   "total_revenue": 3854.52,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2671980,
+   "ad_seconds_filled": 1795545,
+   "underfilled_breaks": 4089,
+   "world": {
+    "bids_total": 152287,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2407363514260883,
+    "viewers_per_break": 0.10891206447025362,
+    "requested_impressions": 33486,
+    "booked_impressions": 33486
+   },
+   "reach": {
+    "impressions": 33486,
+    "reach": 14278,
+    "avg_frequency": 2.345,
+    "impressions_beyond_3rd_per_viewer_share": 0.22,
+    "impression_share_by_frequency": {
+     "1": 0.2017,
+     "2": 0.1915,
+     "3": 0.1695,
+     "4-5": 0.1908,
+     "6-10": 0.1719,
+     "11+": 0.0746
+    },
+    "violations_of_reference_cap": 2938,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 95123,
+    "true_impressions": 90536,
+    "reconciled": {
+     "impressions_counted": 90536,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 95123,
+     "overcount": 0.0507,
+     "campaigns_miscounted": 39,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1562
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 2,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 31.9,
+   "breaks": 37909,
+   "programmatic_revenue": 1942.57,
+   "guaranteed_revenue": 1504.9,
+   "makegood_liability": 0.0,
+   "total_revenue": 3447.47,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2676720,
+   "ad_seconds_filled": 1755675,
+   "underfilled_breaks": 5988,
+   "world": {
+    "bids_total": 151735,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2288024735402545,
+    "viewers_per_break": 0.10928766797478892,
+    "requested_impressions": 36706,
+    "booked_impressions": 36706
+   },
+   "reach": {
+    "impressions": 36706,
+    "reach": 13219,
+    "avg_frequency": 2.777,
+    "impressions_beyond_3rd_per_viewer_share": 0.2408,
+    "impression_share_by_frequency": {
+     "1": 0.1179,
+     "2": 0.1707,
+     "3": 0.1982,
+     "4-5": 0.2467,
+     "6-10": 0.2139,
+     "11+": 0.0526
+    },
+    "violations_of_reference_cap": 5317,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 13
+   },
+   "beacons": {
+    "beacons": 92084,
+    "true_impressions": 87752,
+    "reconciled": {
+     "impressions_counted": 87752,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 92084,
+     "overcount": 0.0494,
+     "campaigns_miscounted": 38,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1448
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 2,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 57.1,
+   "breaks": 37909,
+   "programmatic_revenue": 2650.99,
+   "guaranteed_revenue": 922.41,
+   "makegood_liability": 582.49,
+   "total_revenue": 2990.91,
+   "campaigns": 40,
+   "delivered_in_full": 22,
+   "delivered_in_full_share": 0.55,
+   "mean_delivery_share": 0.7393,
+   "ad_seconds_requested": 2676720,
+   "ad_seconds_filled": 1852440,
+   "underfilled_breaks": 555,
+   "world": {
+    "bids_total": 151735,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2288024735402545,
+    "viewers_per_break": 0.10928766797478892,
+    "requested_impressions": 36706,
+    "booked_impressions": 36706
+   },
+   "reach": {
+    "impressions": 23039,
+    "reach": 14457,
+    "avg_frequency": 1.594,
+    "impressions_beyond_3rd_per_viewer_share": 0.0861,
+    "impression_share_by_frequency": {
+     "1": 0.4236,
+     "2": 0.2427,
+     "3": 0.1302,
+     "4-5": 0.1204,
+     "6-10": 0.0741,
+     "11+": 0.0089
+    },
+    "violations_of_reference_cap": 127,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 97542,
+    "true_impressions": 92923,
+    "reconciled": {
+     "impressions_counted": 92923,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 97542,
+     "overcount": 0.0497,
+     "campaigns_miscounted": 36,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1606
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 2,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 85.4,
+   "breaks": 37909,
+   "programmatic_revenue": 2504.99,
+   "guaranteed_revenue": 1504.9,
+   "makegood_liability": 0.0,
+   "total_revenue": 4009.89,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2676720,
+   "ad_seconds_filled": 1798935,
+   "underfilled_breaks": 3732,
+   "world": {
+    "bids_total": 151735,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2288024735402545,
+    "viewers_per_break": 0.10928766797478892,
+    "requested_impressions": 36706,
+    "booked_impressions": 36706
+   },
+   "reach": {
+    "impressions": 36706,
+    "reach": 16714,
+    "avg_frequency": 2.196,
+    "impressions_beyond_3rd_per_viewer_share": 0.1886,
+    "impression_share_by_frequency": {
+     "1": 0.2275,
+     "2": 0.1994,
+     "3": 0.1715,
+     "4-5": 0.1963,
+     "6-10": 0.1662,
+     "11+": 0.0392
+    },
+    "violations_of_reference_cap": 2425,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 13
+   },
+   "beacons": {
+    "beacons": 95826,
+    "true_impressions": 91287,
+    "reconciled": {
+     "impressions_counted": 91287,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 95826,
+     "overcount": 0.0497,
+     "campaigns_miscounted": 39,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1597
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 3,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 30.5,
+   "breaks": 37872,
+   "programmatic_revenue": 1536.36,
+   "guaranteed_revenue": 1423.51,
+   "makegood_liability": 0.0,
+   "total_revenue": 2959.87,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2667780,
+   "ad_seconds_filled": 1750950,
+   "underfilled_breaks": 6238,
+   "world": {
+    "bids_total": 152019,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.252160126833135,
+    "viewers_per_break": 0.10927467300832343,
+    "requested_impressions": 33540,
+    "booked_impressions": 33540
+   },
+   "reach": {
+    "impressions": 33540,
+    "reach": 13367,
+    "avg_frequency": 2.509,
+    "impressions_beyond_3rd_per_viewer_share": 0.2063,
+    "impression_share_by_frequency": {
+     "1": 0.1526,
+     "2": 0.1933,
+     "3": 0.2034,
+     "4-5": 0.224,
+     "6-10": 0.1887,
+     "11+": 0.038
+    },
+    "violations_of_reference_cap": 4509,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 7
+   },
+   "beacons": {
+    "beacons": 91126,
+    "true_impressions": 86771,
+    "reconciled": {
+     "impressions_counted": 86771,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 91126,
+     "overcount": 0.0502,
+     "campaigns_miscounted": 39,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1492
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 3,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 59.8,
+   "breaks": 37872,
+   "programmatic_revenue": 1967.86,
+   "guaranteed_revenue": 967.19,
+   "makegood_liability": 456.33,
+   "total_revenue": 2478.72,
+   "campaigns": 40,
+   "delivered_in_full": 20,
+   "delivered_in_full_share": 0.5,
+   "mean_delivery_share": 0.7129,
+   "ad_seconds_requested": 2667780,
+   "ad_seconds_filled": 1852035,
+   "underfilled_breaks": 558,
+   "world": {
+    "bids_total": 152019,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.252160126833135,
+    "viewers_per_break": 0.10927467300832343,
+    "requested_impressions": 33540,
+    "booked_impressions": 33540
+   },
+   "reach": {
+    "impressions": 23001,
+    "reach": 15148,
+    "avg_frequency": 1.518,
+    "impressions_beyond_3rd_per_viewer_share": 0.0789,
+    "impression_share_by_frequency": {
+     "1": 0.4694,
+     "2": 0.2318,
+     "3": 0.1145,
+     "4-5": 0.105,
+     "6-10": 0.0696,
+     "11+": 0.0098
+    },
+    "violations_of_reference_cap": 143,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 7
+   },
+   "beacons": {
+    "beacons": 97436,
+    "true_impressions": 92776,
+    "reconciled": {
+     "impressions_counted": 92776,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 97436,
+     "overcount": 0.0502,
+     "campaigns_miscounted": 36,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1567
+    }
+   }
+  },
+  {
+   "window": "2018-03-01",
+   "seed": 3,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 75.3,
+   "breaks": 37872,
+   "programmatic_revenue": 1869.99,
+   "guaranteed_revenue": 1423.51,
+   "makegood_liability": 0.0,
+   "total_revenue": 3293.5,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2667780,
+   "ad_seconds_filled": 1783530,
+   "underfilled_breaks": 4482,
+   "world": {
+    "bids_total": 152019,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.252160126833135,
+    "viewers_per_break": 0.10927467300832343,
+    "requested_impressions": 33540,
+    "booked_impressions": 33540
+   },
+   "reach": {
+    "impressions": 33540,
+    "reach": 16084,
+    "avg_frequency": 2.085,
+    "impressions_beyond_3rd_per_viewer_share": 0.173,
+    "impression_share_by_frequency": {
+     "1": 0.2554,
+     "2": 0.2018,
+     "3": 0.1708,
+     "4-5": 0.1838,
+     "6-10": 0.1505,
+     "11+": 0.0377
+    },
+    "violations_of_reference_cap": 2554,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 7
+   },
+   "beacons": {
+    "beacons": 93820,
+    "true_impressions": 89343,
+    "reconciled": {
+     "impressions_counted": 89343,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 93820,
+     "overcount": 0.0501,
+     "campaigns_miscounted": 39,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1525
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 1,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 30.4,
+   "breaks": 30165,
+   "programmatic_revenue": 1588.33,
+   "guaranteed_revenue": 1177.0,
+   "makegood_liability": 0.0,
+   "total_revenue": 2765.34,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2122560,
+   "ad_seconds_filled": 1432380,
+   "underfilled_breaks": 4692,
+   "world": {
+    "bids_total": 120618,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.274382986368434,
+    "viewers_per_break": 0.11365626894832581,
+    "requested_impressions": 29591,
+    "booked_impressions": 29591
+   },
+   "reach": {
+    "impressions": 29591,
+    "reach": 10669,
+    "avg_frequency": 2.774,
+    "impressions_beyond_3rd_per_viewer_share": 0.2623,
+    "impression_share_by_frequency": {
+     "1": 0.1332,
+     "2": 0.155,
+     "3": 0.1923,
+     "4-5": 0.2243,
+     "6-10": 0.1959,
+     "11+": 0.0993
+    },
+    "violations_of_reference_cap": 4632,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 75087,
+    "true_impressions": 71491,
+    "reconciled": {
+     "impressions_counted": 71491,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 75087,
+     "overcount": 0.0503,
+     "campaigns_miscounted": 40,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1039
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 1,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 57.9,
+   "breaks": 30165,
+   "programmatic_revenue": 2129.66,
+   "guaranteed_revenue": 806.43,
+   "makegood_liability": 370.58,
+   "total_revenue": 2565.51,
+   "campaigns": 40,
+   "delivered_in_full": 18,
+   "delivered_in_full_share": 0.45,
+   "mean_delivery_share": 0.7026,
+   "ad_seconds_requested": 2122560,
+   "ad_seconds_filled": 1526055,
+   "underfilled_breaks": 266,
+   "world": {
+    "bids_total": 120618,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.274382986368434,
+    "viewers_per_break": 0.11365626894832581,
+    "requested_impressions": 29591,
+    "booked_impressions": 29591
+   },
+   "reach": {
+    "impressions": 20053,
+    "reach": 11209,
+    "avg_frequency": 1.789,
+    "impressions_beyond_3rd_per_viewer_share": 0.1574,
+    "impression_share_by_frequency": {
+     "1": 0.3665,
+     "2": 0.2028,
+     "3": 0.1179,
+     "4-5": 0.1378,
+     "6-10": 0.122,
+     "11+": 0.0531
+    },
+    "violations_of_reference_cap": 206,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 9
+   },
+   "beacons": {
+    "beacons": 80894,
+    "true_impressions": 77001,
+    "reconciled": {
+     "impressions_counted": 77001,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 80894,
+     "overcount": 0.0506,
+     "campaigns_miscounted": 38,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1210
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 1,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 60.2,
+   "breaks": 30165,
+   "programmatic_revenue": 2009.1,
+   "guaranteed_revenue": 1177.0,
+   "makegood_liability": 0.0,
+   "total_revenue": 3186.11,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2122560,
+   "ad_seconds_filled": 1472715,
+   "underfilled_breaks": 2758,
+   "world": {
+    "bids_total": 120618,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.274382986368434,
+    "viewers_per_break": 0.11365626894832581,
+    "requested_impressions": 29591,
+    "booked_impressions": 29591
+   },
+   "reach": {
+    "impressions": 29591,
+    "reach": 12579,
+    "avg_frequency": 2.352,
+    "impressions_beyond_3rd_per_viewer_share": 0.2252,
+    "impression_share_by_frequency": {
+     "1": 0.2032,
+     "2": 0.1881,
+     "3": 0.1734,
+     "4-5": 0.1756,
+     "6-10": 0.176,
+     "11+": 0.0837
+    },
+    "violations_of_reference_cap": 2646,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 10,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 78132,
+    "true_impressions": 74390,
+    "reconciled": {
+     "impressions_counted": 74390,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 78132,
+     "overcount": 0.0503,
+     "campaigns_miscounted": 39,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1158
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 2,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 40.9,
+   "breaks": 30178,
+   "programmatic_revenue": 1476.62,
+   "guaranteed_revenue": 1326.32,
+   "makegood_liability": 0.0,
+   "total_revenue": 2802.94,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2130630,
+   "ad_seconds_filled": 1438800,
+   "underfilled_breaks": 4657,
+   "world": {
+    "bids_total": 120839,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.260955593029792,
+    "viewers_per_break": 0.11379426644182125,
+    "requested_impressions": 32377,
+    "booked_impressions": 32377
+   },
+   "reach": {
+    "impressions": 32377,
+    "reach": 11811,
+    "avg_frequency": 2.741,
+    "impressions_beyond_3rd_per_viewer_share": 0.2438,
+    "impression_share_by_frequency": {
+     "1": 0.1271,
+     "2": 0.1681,
+     "3": 0.2013,
+     "4-5": 0.2332,
+     "6-10": 0.1975,
+     "11+": 0.0729
+    },
+    "violations_of_reference_cap": 4587,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 13
+   },
+   "beacons": {
+    "beacons": 75820,
+    "true_impressions": 72272,
+    "reconciled": {
+     "impressions_counted": 72272,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 75820,
+     "overcount": 0.0491,
+     "campaigns_miscounted": 36,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1068
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 2,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 56.6,
+   "breaks": 30178,
+   "programmatic_revenue": 2122.08,
+   "guaranteed_revenue": 736.77,
+   "makegood_liability": 589.56,
+   "total_revenue": 2269.29,
+   "campaigns": 40,
+   "delivered_in_full": 20,
+   "delivered_in_full_share": 0.5,
+   "mean_delivery_share": 0.7023,
+   "ad_seconds_requested": 2130630,
+   "ad_seconds_filled": 1521795,
+   "underfilled_breaks": 505,
+   "world": {
+    "bids_total": 120839,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.260955593029792,
+    "viewers_per_break": 0.11379426644182125,
+    "requested_impressions": 32377,
+    "booked_impressions": 32377
+   },
+   "reach": {
+    "impressions": 18474,
+    "reach": 11572,
+    "avg_frequency": 1.596,
+    "impressions_beyond_3rd_per_viewer_share": 0.0901,
+    "impression_share_by_frequency": {
+     "1": 0.4247,
+     "2": 0.2399,
+     "3": 0.128,
+     "4-5": 0.1198,
+     "6-10": 0.0722,
+     "11+": 0.0155
+    },
+    "violations_of_reference_cap": 116,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 10
+   },
+   "beacons": {
+    "beacons": 79903,
+    "true_impressions": 76160,
+    "reconciled": {
+     "impressions_counted": 76160,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 79903,
+     "overcount": 0.0491,
+     "campaigns_miscounted": 35,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1182
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 2,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 68.5,
+   "breaks": 30178,
+   "programmatic_revenue": 1954.06,
+   "guaranteed_revenue": 1326.32,
+   "makegood_liability": 0.0,
+   "total_revenue": 3280.39,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2130630,
+   "ad_seconds_filled": 1478175,
+   "underfilled_breaks": 2632,
+   "world": {
+    "bids_total": 120839,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.260955593029792,
+    "viewers_per_break": 0.11379426644182125,
+    "requested_impressions": 32377,
+    "booked_impressions": 32377
+   },
+   "reach": {
+    "impressions": 32377,
+    "reach": 14941,
+    "avg_frequency": 2.167,
+    "impressions_beyond_3rd_per_viewer_share": 0.1901,
+    "impression_share_by_frequency": {
+     "1": 0.2382,
+     "2": 0.1964,
+     "3": 0.1685,
+     "4-5": 0.1885,
+     "6-10": 0.1543,
+     "11+": 0.0542
+    },
+    "violations_of_reference_cap": 2105,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 13,
+    "delivered_in_full": 13
+   },
+   "beacons": {
+    "beacons": 79198,
+    "true_impressions": 75493,
+    "reconciled": {
+     "impressions_counted": 75493,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 79198,
+     "overcount": 0.0491,
+     "campaigns_miscounted": 37,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1168
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 3,
+   "policy": "guaranteed_first",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 28.3,
+   "breaks": 30091,
+   "programmatic_revenue": 1163.82,
+   "guaranteed_revenue": 1267.4,
+   "makegood_liability": 0.0,
+   "total_revenue": 2431.22,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2116290,
+   "ad_seconds_filled": 1432395,
+   "underfilled_breaks": 4911,
+   "world": {
+    "bids_total": 120489,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2882397810382735,
+    "viewers_per_break": 0.1135415264503971,
+    "requested_impressions": 29816,
+    "booked_impressions": 29816
+   },
+   "reach": {
+    "impressions": 29816,
+    "reach": 11878,
+    "avg_frequency": 2.51,
+    "impressions_beyond_3rd_per_viewer_share": 0.2046,
+    "impression_share_by_frequency": {
+     "1": 0.1514,
+     "2": 0.1941,
+     "3": 0.2102,
+     "4-5": 0.2251,
+     "6-10": 0.1721,
+     "11+": 0.0473
+    },
+    "violations_of_reference_cap": 3942,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 7
+   },
+   "beacons": {
+    "beacons": 74964,
+    "true_impressions": 71396,
+    "reconciled": {
+     "impressions_counted": 71396,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 74964,
+     "overcount": 0.05,
+     "campaigns_miscounted": 40,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1078
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 3,
+   "policy": "highest_bid",
+   "exponent": null,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 55.9,
+   "breaks": 30091,
+   "programmatic_revenue": 1646.9,
+   "guaranteed_revenue": 788.91,
+   "makegood_liability": 478.48,
+   "total_revenue": 1957.32,
+   "campaigns": 40,
+   "delivered_in_full": 17,
+   "delivered_in_full_share": 0.425,
+   "mean_delivery_share": 0.6699,
+   "ad_seconds_requested": 2116290,
+   "ad_seconds_filled": 1520460,
+   "underfilled_breaks": 548,
+   "world": {
+    "bids_total": 120489,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2882397810382735,
+    "viewers_per_break": 0.1135415264503971,
+    "requested_impressions": 29816,
+    "booked_impressions": 29816
+   },
+   "reach": {
+    "impressions": 18653,
+    "reach": 12199,
+    "avg_frequency": 1.529,
+    "impressions_beyond_3rd_per_viewer_share": 0.085,
+    "impression_share_by_frequency": {
+     "1": 0.4674,
+     "2": 0.2244,
+     "3": 0.1187,
+     "4-5": 0.1042,
+     "6-10": 0.0671,
+     "11+": 0.0182
+    },
+    "violations_of_reference_cap": 95,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 6
+   },
+   "beacons": {
+    "beacons": 79862,
+    "true_impressions": 76031,
+    "reconciled": {
+     "impressions_counted": 76031,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 79862,
+     "overcount": 0.0504,
+     "campaigns_miscounted": 36,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1147
+    }
+   }
+  },
+  {
+   "window": "2018-09-01",
+   "seed": 3,
+   "policy": "adfill",
+   "exponent": 0.5,
+   "makegood_ratio": 1.0,
+   "us_per_decision": 62.2,
+   "breaks": 30091,
+   "programmatic_revenue": 1494.72,
+   "guaranteed_revenue": 1267.4,
+   "makegood_liability": 0.0,
+   "total_revenue": 2762.11,
+   "campaigns": 40,
+   "delivered_in_full": 40,
+   "delivered_in_full_share": 1.0,
+   "mean_delivery_share": 1.0,
+   "ad_seconds_requested": 2116290,
+   "ad_seconds_filled": 1463865,
+   "underfilled_breaks": 3405,
+   "world": {
+    "bids_total": 120489,
+    "bids_refused": 0,
+    "effective_slots_per_break": 2.2882397810382735,
+    "viewers_per_break": 0.1135415264503971,
+    "requested_impressions": 29816,
+    "booked_impressions": 29816
+   },
+   "reach": {
+    "impressions": 29816,
+    "reach": 14382,
+    "avg_frequency": 2.073,
+    "impressions_beyond_3rd_per_viewer_share": 0.173,
+    "impression_share_by_frequency": {
+     "1": 0.2601,
+     "2": 0.1996,
+     "3": 0.1727,
+     "4-5": 0.1785,
+     "6-10": 0.1441,
+     "11+": 0.0451
+    },
+    "violations_of_reference_cap": 2221,
+    "violations_of_own_caps": 0
+   },
+   "reach_deals": {
+    "n": 7,
+    "delivered_in_full": 7
+   },
+   "beacons": {
+    "beacons": 77445,
+    "true_impressions": 73732,
+    "reconciled": {
+     "impressions_counted": 73732,
+     "overcount": 0.0,
+     "campaigns_miscounted": 0,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 0
+    },
+    "naive": {
+     "impressions_counted": 77445,
+     "overcount": 0.0504,
+     "campaigns_miscounted": 38,
+     "frequency_cap_violations": 0,
+     "viewers_over_ad_load": 1082
+    }
+   }
+  }
+ ]
+}

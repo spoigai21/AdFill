@@ -14,7 +14,9 @@ from pathlib import Path
 from statistics import mean
 
 from adfill.core.engine import Policy
+from adfill.report.beacons import audit
 from adfill.report.delivery import headline
+from adfill.report.reach import reach_report
 from adfill.sim.config import SimConfig
 from adfill.sim.runner import run_policy
 from adfill.sim.world import movielens_world
@@ -33,9 +35,17 @@ def run_world(task: dict) -> list[dict]:
 
     def record(policy, exponent, ratio, log, us):
         h, _ = headline(log, _with_penalty(world.campaigns, ratio))
+        rf = reach_report(log, world.campaigns, cap=3)
+        caps = {c.id: (c.freq_cap, c.freq_window_s) for c in world.campaigns}
+        beacons = audit(log, caps, cfg.max_ad_seconds_per_hour, dup_rate=0.05, max_delay_s=3600, seed=task["seed"])
+        reach_rows = [r for r in rf["campaigns"] if r["goal_type"] == "reach"]
         rows.append({"window": task["window"], "seed": task["seed"], "policy": policy.value,
                      "exponent": exponent, "makegood_ratio": ratio, "us_per_decision": round(us, 1),
-                     **h.to_dict(), "world": dict(world.stats)})
+                     **h.to_dict(), "world": dict(world.stats),
+                     "reach": {k: v for k, v in rf.items() if k != "campaigns"},
+                     "reach_deals": {"n": len(reach_rows),
+                                     "delivered_in_full": sum(r["reach"] >= r["goal"] for r in reach_rows)},
+                     "beacons": beacons})
 
     for policy in (Policy.GUARANTEED_FIRST, Policy.HIGHEST_BID):
         log = base / f"{policy.value}.jsonl"

@@ -69,6 +69,11 @@ class SimConfig:
     avails_min_fill: float = 0.2  # refuse a deal outright if less than this share of the ask fits
     booking_forecast_bias: float = 1.0  # misstate supply at booking, for the wrong-forecast experiment
 
+    # reach and frequency (Phase 4)
+    reach_share: float = 0.0  # share of deals that buy unique viewers instead of impressions
+    freq_cap: int = 0  # max ads per viewer per campaign in any trailing freq_window_s; 0 = uncapped
+    freq_window_s: int = 86_400
+
     # allocation
     urgency_exponent: float = 0.5  # chosen on tuning windows only; see spec/BUG_LOG.md B6
     pod_tolerance_s: int = 0

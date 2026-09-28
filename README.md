@@ -142,6 +142,32 @@ $10.98 CPM and wins 25.6%. Kaplan–Meier, which also uses the losses, is off by
 prescribes $17.59, the true answer. Exact thresholds come from the pod solver at 9,000 sampled breaks;
 22% of breaks cannot be won at any price because of the ad-load cap.
 
+## Phase 4 result: reach, frequency and ad load
+
+Advertisers buy people, not impressions. Uncapped, 19.7% of AdFill's guaranteed impressions went to a
+viewer who had already seen that campaign three times.
+
+| AdFill, held-out | Revenue | Delivered in full | Reach | Average frequency |
+|---|---|---|---|---|
+| No cap | $22,249 | 240 / 240 | 116,688 | 2.19 |
+| 3 per viewer per day | $22,236 | 240 / 240 | 118,196 | 2.16 |
+| **1 per viewer per day** | **$22,123** | 237 / 240 | **159,858** | **1.59** |
+
+A daily cap of one buys **37% more reach for 0.6% of revenue**. (A cap of three barely binds: few
+viewers see more than a handful of breaks a day.) Uncapped, AdFill already reaches 23.5% more people
+than guaranteed-first from the same 254,964 impressions, because it does not pour every early slot into
+whichever deal is first in line.
+
+**Reach deals.** With a quarter of deals buying unique viewers instead of impressions, and urgency priced
+on the share of upcoming traffic from viewers not yet reached, AdFill delivered all 60 reach deals in
+full; highest-bid delivered 51.
+
+**Duplicated, out-of-order delivery reports.** Every served ad emits a beacon; 5% are duplicated and all
+arrive up to an hour late, out of order. Reconciling by impression id and checking on serve time gave
+exact counts for every campaign and **zero** frequency-cap and ad-load violations in every run. Counting
+beacons as they arrive overbills by 5%, miscounts every campaign, and reports thousands of cap
+violations that never happened.
+
 ## Run it
 
 ```sh
@@ -160,6 +186,8 @@ uv run adfill sweep --name p2-gbm-x1.0 --windows 2018-03-01 2018-09-01 --exponen
 uv run adfill content                           # brand-safety refusal and forecast accuracy
 uv run adfill forecast                          # Phase 3: forecast validation, held-out
 uv run adfill winrate                           # win-rate curve from censored feedback
+uv run adfill sweep --name p4-cap1 --windows 2018-03-01 2018-09-01 --exponents 0.5 --makegood-ratios 1.0 \
+  --price-source criteo-cpa --rate-model gbm --freq-cap 1   # reach, frequency and beacon audit per row
 uv run adfill sweep --name p3-holdout-contention --windows 2018-03-01 2018-09-01 --exponents 0.5 1.0 2.0 4.0 \
   --makegood-ratios 1.0 --price-source criteo-cpa --rate-model gbm --contention
 uv run adfill sweep --name p3-avails-book60-safety --windows 2018-03-01 2018-09-01 --exponents 0.5 \

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -30,7 +30,9 @@ class Headline:
 
 
 def read_delivery(log_path: Path) -> tuple[Counter, dict]:
+    """Per campaign: impressions served; totals; and (in totals["viewers"]) the viewers each reached."""
     delivered: Counter = Counter()
+    viewers: dict[str, set[int]] = defaultdict(set)
     totals = {"breaks": 0, "prog": 0.0, "requested": 0, "filled": 0, "underfilled": 0}
     with log_path.open() as f:
         for line in f:
@@ -42,13 +44,18 @@ def read_delivery(log_path: Path) -> tuple[Counter, dict]:
             for ad in row["ads"]:
                 if ad["kind"] == "guaranteed":
                     delivered[ad["ref"]] += 1
+                    viewers[ad["ref"]].add(row["viewer"])
                 else:
                     totals["prog"] += ad["paid"]
+    totals["viewers"] = viewers
     return delivered, totals
 
 
 def headline(log_path: Path, campaigns: list[Campaign]) -> tuple[Headline, Counter]:
-    delivered, totals = read_delivery(log_path)
+    impressions, totals = read_delivery(log_path)
+    # Progress toward goal: impressions, or unique viewers for reach deals.
+    delivered = Counter({c.id: len(totals["viewers"][c.id]) if c.goal_type == "reach" else impressions[c.id]
+                         for c in campaigns})
     guaranteed = makegood = 0.0
     full = 0
     shares = []
