@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Datasets and run outputs (large, re-downloadable)
+data/
+*.parquet
+
+.DS_Store
