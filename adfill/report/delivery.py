@@ -43,7 +43,7 @@ def read_delivery(log_path: Path) -> tuple[Counter, dict]:
                 if ad["kind"] == "guaranteed":
                     delivered[ad["ref"]] += 1
                 else:
-                    totals["prog"] += ad["price_cpm"] / 1000
+                    totals["prog"] += ad["paid"]
     return delivered, totals
 
 

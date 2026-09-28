@@ -58,3 +58,14 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 | Each advertiser belongs to exactly one product category | Competitive separation is by category; the pod solver relies on it and rejects input that breaks it. |
 | Guaranteed and programmatic advertisers are disjoint | Keeps one-advertiser-per-pod unambiguous. |
 | A served ad is a delivered impression | Completion is modelled in Phase 2. |
+
+## Performance demand (Phase 2, `price_source = "criteo-cpa"`)
+
+| Rule | Value | Why |
+|---|---|---|
+| Programmatic buyers pay per conversion, not per impression | — | Makes the predicted rate load-bearing: the allocator ranks by CPA × predicted rate but is paid CPA × actual outcome. |
+| Each bid is a real Criteo impression from the test days (24–30), with its real features and conversion label | sampled with replacement per advertiser | No model has trained on a row it is later valued on. |
+| Advertiser CPA = its anchored CPM ÷ 1000 ÷ its average conversion rate | — | At its average rate, each advertiser is worth what it was worth in Phase 1; only per-impression valuation changes. |
+| "Conversion" is the dataset's `conversion` label (a conversion within 30 days of the impression) | 4.84% on test days | Real label; several impressions can share one conversion. |
+| The Criteo user and outcome are independent of the simulated video context (title, device) | — | The datasets do not link. Stated as a limitation. |
+| Row sampling does not depend on the rate model | — | Every model is compared on identical impressions and outcomes. |

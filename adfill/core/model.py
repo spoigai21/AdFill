@@ -50,13 +50,26 @@ class Campaign:
 
 @dataclass(frozen=True, slots=True)
 class Bid:
-    """A programmatic bid for one slot in one specific break."""
+    """A programmatic bid for one slot in one specific break.
+
+    A plain bid pays `cpm` per thousand impressions. A performance bid (`cpa` set) pays `cpa` only if
+    the impression converts; its `cpm` is then the expected value under the predicted conversion rate,
+    which is what the allocator ranks by, while `paid` is what actually arrives.
+    """
 
     id: str
     advertiser: str
     category: str
     creative: Creative
     cpm: float
+    cpa: float | None = None
+    converted: bool = False
+
+    @property
+    def paid(self) -> float:
+        if self.cpa is None:
+            return self.cpm / 1000.0
+        return self.cpa if self.converted else 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,3 +97,4 @@ class Candidate:
     duration_s: int
     value: float
     price_cpm: float
+    paid: float = 0.0  # realised programmatic payment if served; guaranteed is billed from delivery

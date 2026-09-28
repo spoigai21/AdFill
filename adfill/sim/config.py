@@ -26,7 +26,11 @@ class SimConfig:
     max_ad_seconds_per_hour: int = 240
 
     # programmatic demand
-    price_source: str = "criteo"  # "criteo" (real clearing prices) or "lognormal" (no data needed)
+    # "criteo": real clearing prices, pay per impression. "criteo-cpa": real impressions bought per
+    # conversion, valued by `rate_model`. "lognormal": no data needed (tests).
+    price_source: str = "criteo"
+    rate_model: str = "gbm"  # constant | logistic_hashed | gbm | oracle
+    rate_inflation: float = 1.0  # multiply predicted rates, to measure the cost of miscalibration
     n_programmatic_advertisers: int = 60
     bids_per_break_mean: float = 4.0
     bid_cpm_median: float = 18.0

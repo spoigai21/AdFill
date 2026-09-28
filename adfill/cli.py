@@ -27,7 +27,8 @@ def _campaign_rows(campaigns) -> list[dict]:
 
 def cmd_run(args: argparse.Namespace) -> None:
     cfg = SimConfig(seed=args.seed, urgency_exponent=args.urgency_exponent, makegood_ratio=args.makegood_ratio,
-                    price_source=args.price_source, bid_cpm_median=args.bid_cpm_median)
+                    price_source=args.price_source, bid_cpm_median=args.bid_cpm_median,
+                    rate_model=args.rate_model, rate_inflation=args.rate_inflation)
     if args.source == "movielens":
         start = int(datetime.fromisoformat(args.start).replace(tzinfo=timezone.utc).timestamp())
         world = movielens_world(Path(args.ml_dir), cfg, start, args.days, args.history_days, args.viewer_fraction)
@@ -60,7 +61,8 @@ def cmd_sweep(args: argparse.Namespace) -> None:
 
     out = run_sweep(args.name, args.windows, args.seeds, args.exponents, args.makegood_ratios, args.ml_dir,
                     args.run_dir, args.days, args.history_days, args.workers,
-                    {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median})
+                    {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median,
+                     "rate_model": args.rate_model, "rate_inflation": args.rate_inflation})
     print(out.with_suffix(".md").read_text())
 
 
@@ -84,6 +86,12 @@ def cmd_pods(args: argparse.Namespace) -> None:
     print(f"wrote {out}")
 
 
+def cmd_train_models(args: argparse.Namespace) -> None:
+    from adfill.predict.train import run
+
+    print(json.dumps(run(seed=args.seed, train_rows=args.train_rows), indent=1))
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="adfill")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -98,8 +106,10 @@ def main() -> None:
     r.add_argument("--viewer-fraction", type=float, default=0.1)
     r.add_argument("--urgency-exponent", type=float, default=0.5)
     r.add_argument("--makegood-ratio", type=float, default=1.0)
-    r.add_argument("--price-source", choices=["criteo", "lognormal"], default="criteo")
+    r.add_argument("--price-source", choices=["criteo", "criteo-cpa", "lognormal"], default="criteo")
     r.add_argument("--bid-cpm-median", type=float, default=18.0)
+    r.add_argument("--rate-model", choices=["constant", "logistic_hashed", "gbm", "logistic_hashed_raw", "gbm_raw", "oracle"], default="gbm")
+    r.add_argument("--rate-inflation", type=float, default=1.0)
     r.add_argument("--run-dir", default="data/runs")
     r.set_defaults(func=cmd_run)
 
@@ -113,8 +123,10 @@ def main() -> None:
     w.add_argument("--days", type=int, default=30)
     w.add_argument("--history-days", type=int, default=14)
     w.add_argument("--workers", type=int, default=4)
-    w.add_argument("--price-source", choices=["criteo", "lognormal"], default="criteo")
+    w.add_argument("--price-source", choices=["criteo", "criteo-cpa", "lognormal"], default="criteo")
     w.add_argument("--bid-cpm-median", type=float, default=18.0)
+    w.add_argument("--rate-model", choices=["constant", "logistic_hashed", "gbm", "logistic_hashed_raw", "gbm_raw", "oracle"], default="gbm")
+    w.add_argument("--rate-inflation", type=float, default=1.0)
     w.add_argument("--run-dir", default="data/runs")
     w.set_defaults(func=cmd_sweep)
 
@@ -125,6 +137,11 @@ def main() -> None:
     q.add_argument("--history-days", type=int, default=14)
     q.add_argument("--ml-dir", default="data/ml-25m")
     q.set_defaults(func=cmd_pods)
+
+    m = sub.add_parser("train-models", help="fit conversion-rate models on Criteo, time-forward split")
+    m.add_argument("--seed", type=int, default=1)
+    m.add_argument("--train-rows", type=int, default=4_000_000)
+    m.set_defaults(func=cmd_train_models)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

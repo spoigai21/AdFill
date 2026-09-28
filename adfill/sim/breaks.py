@@ -7,7 +7,7 @@ import pandas as pd
 
 from adfill.core.model import Bid, Break, Creative
 from adfill.sim.config import CATEGORIES, SimConfig
-from adfill.sim.prices import CriteoPrices
+from adfill.sim.prices import CriteoConversions, CriteoPrices
 
 
 def _choice(rng: np.random.Generator, table: tuple[tuple, ...], size: int) -> np.ndarray:
@@ -47,16 +47,24 @@ def make_breaks(
     adv_rng = np.random.default_rng([cfg.seed, 0xAD])
     adv_mult = np.exp(cfg.advertiser_price_sigma * adv_rng.standard_normal(cfg.n_programmatic_advertisers))
     adv_cat = adv_rng.choice(len(CATEGORIES), cfg.n_programmatic_advertisers)
+    cpa = None
+    converted = np.zeros(total, dtype=bool)
     if cfg.price_source == "criteo":
-        prices = CriteoPrices(cfg.n_programmatic_advertisers, cfg.bid_cpm_median, cfg.seed)
-        base = prices.draw(adv, rng)
+        base = CriteoPrices(cfg.n_programmatic_advertisers, cfg.bid_cpm_median, cfg.seed).draw(adv, rng)
+    elif cfg.price_source == "criteo-cpa":
+        conv = CriteoConversions(cfg.n_programmatic_advertisers, cfg.bid_cpm_median, cfg.seed)
+        cpa, p_hat, converted = conv.draw(adv, rng, cfg.rate_model, cfg.rate_inflation)
+        base = 1000 * cpa * p_hat
     elif cfg.price_source == "lognormal":
         base = cfg.bid_cpm_median * np.exp(cfg.bid_cpm_sigma * rng.standard_normal(total)) * adv_mult[adv]
     else:
         raise ValueError(f"unknown price_source {cfg.price_source!r}")
     dev_mult = dict(cfg.device_price_multiplier)
     bid_dev = np.repeat(np.array([devices[v] for v in viewer.tolist()], dtype=object), n_bids)
-    cpm = np.round(base * np.array([dev_mult[d] for d in bid_dev]), 4)
+    mult = np.array([dev_mult[d] for d in bid_dev])
+    cpm = np.round(base * mult, 4)
+    if cpa is not None:
+        cpa = cpa * mult
 
     creatives: dict[tuple[int, int], Creative] = {}
     offsets = np.concatenate([[0], np.cumsum(n_bids)])
@@ -69,7 +77,8 @@ def make_breaks(
             cr = creatives.get((a, d))
             if cr is None:
                 cr = creatives[(a, d)] = Creative(f"p{a}-{d}", d)
-            bids.append(Bid(f"{bid_id}:{j - offsets[i]}", f"p{a}", CATEGORIES[adv_cat[a]], cr, float(cpm[j])))
+            bids.append(Bid(f"{bid_id}:{j - offsets[i]}", f"p{a}", CATEGORIES[adv_cat[a]], cr, float(cpm[j]),
+                            None if cpa is None else float(cpa[j]), bool(converted[j])))
         v = int(viewer[i])
         breaks.append(
             Break(bid_id, v, int(title[i]), titles.get(int(title[i]), frozenset()), devices[v],

@@ -24,7 +24,7 @@ def decision_row(d: Decision) -> dict:
         "underfilled": d.underfilled,
         "ads": [
             {"kind": a.kind.value, "ref": a.ref, "advertiser": a.advertiser, "category": a.category,
-             "duration_s": a.duration_s, "price_cpm": a.price_cpm, "value": a.value}
+             "duration_s": a.duration_s, "price_cpm": a.price_cpm, "value": a.value, "paid": a.paid}
             for a in d.pod.items
         ],
     }

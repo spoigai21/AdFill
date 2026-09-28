@@ -83,7 +83,8 @@ class Engine:
         for b in brk.bids:
             out.append(
                 Candidate(
-                    Kind.PROGRAMMATIC, b.id, b.advertiser, b.category, b.creative.duration_s, b.cpm / 1000, b.cpm
+                    Kind.PROGRAMMATIC, b.id, b.advertiser, b.category, b.creative.duration_s, b.cpm / 1000, b.cpm,
+                    b.paid,
                 )
             )
         return out

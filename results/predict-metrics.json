@@ -1,0 +1,68 @@
+{
+ "split_days": {
+  "train": [
+   0,
+   20
+  ],
+  "valid": [
+   20,
+   24
+  ],
+  "test": [
+   24,
+   31
+  ]
+ },
+ "rows": {
+  "train_used": 4000000,
+  "train_period": 10852826,
+  "valid": 2150189,
+  "test": 3465012
+ },
+ "test_base_rate": 0.04842,
+ "models": {
+  "constant": {
+   "raw": {
+    "calibration_ratio": 0.9945,
+    "ece": 0.00334,
+    "log_loss": 0.17428,
+    "auc": 0.7465
+   },
+   "calibrated": {
+    "calibration_ratio": 1.0302,
+    "ece": 0.00204,
+    "log_loss": 0.17415,
+    "auc": 0.7471
+   }
+  },
+  "logistic_hashed": {
+   "raw": {
+    "calibration_ratio": 1.1182,
+    "ece": 0.00576,
+    "log_loss": 0.15566,
+    "auc": 0.8286
+   },
+   "calibrated": {
+    "calibration_ratio": 1.0254,
+    "ece": 0.00127,
+    "log_loss": 0.15516,
+    "auc": 0.8286
+   }
+  },
+  "gbm": {
+   "raw": {
+    "calibration_ratio": 1.0353,
+    "ece": 0.00211,
+    "log_loss": 0.15207,
+    "auc": 0.8396
+   },
+   "calibrated": {
+    "calibration_ratio": 1.0074,
+    "ece": 0.00058,
+    "log_loss": 0.15192,
+    "auc": 0.8395
+   }
+  }
+ },
+ "seconds": 91
+}
