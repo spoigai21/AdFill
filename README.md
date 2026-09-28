@@ -31,6 +31,26 @@ full, because every campaign waited and they collided near their deadlines. `k =
 2016–2017 tuning windows ([sweep](results/sweep-phase1-low.md)), was committed, and was then checked on
 the 2018 windows above, which played no part in choosing it.
 
+**Does it depend on the assumed price level?** Programmatic prices have a real shape but an assumed
+level. Halving and doubling that level on the same held-out worlds:
+
+| Median bid | AdFill revenue vs guaranteed-first | AdFill delivered in full | Highest bid delivered in full |
+|---|---|---|---|
+| $9 | +27.6% | 239 / 240 | 65 / 240 |
+| $18 | +38.1% | 239 / 240 | 65 / 240 |
+| $36 | +44.2% | 199 / 240 | 65 / 240 |
+
+The claim holds at every level, but the delivery margin shrinks as cash gets richer relative to
+guaranteed contract prices ($30–50): promises then need to start competing earlier, and `k = 0.25`
+restores 236 / 240 at $36. The right curve depends on the ratio of open-market prices to contract
+prices; it is not a universal constant.
+
+**Pods.** The exact solver finds a pod that fills the break exactly 92.3% of the time; a greedy fill
+manages 88.9%, gets 98.1% of the exact solver's total value, and is worse on 29% of breaks (by up to 50%
+on one). The exact solver costs 51 µs per break against greedy's 6 µs, and is checked against brute
+force on thousands of random catalogues. A full decision costs 57 µs, two-thirds of it in the pod
+solver ([breakdown](results/pods-2018-03-01-s1.json)).
+
 ## Run it
 
 ```sh
@@ -42,6 +62,7 @@ uv run adfill run --name demo --source synthetic --price-source lognormal
 uv run adfill prep-criteo                       # after downloading Criteo (below)
 uv run adfill run --name ml --source movielens --start 2018-03-01
 uv run adfill sweep --name holdout-2018 --windows 2018-03-01 2018-09-01 --exponents 0.25 0.5 1.0
+uv run adfill pods --start 2018-03-01 --seed 1
 ```
 
 Data, unpacked under `data/` (not committed):
@@ -62,5 +83,5 @@ Data, unpacked under `data/` (not committed):
    $18 median CPM. The shape is data; the level is a choice.
 5. The supply forecast is a trailing average that ignores competing campaigns. The best urgency curve
    likely depends on forecast quality, so the sweep is repeated when the forecaster improves.
-6. Timing figures are **per-decision costs on one machine** (73.5 µs, pure Python), not throughput
+6. Timing figures are **per-decision costs on one laptop** (57 µs, pure Python), not throughput
    claims.

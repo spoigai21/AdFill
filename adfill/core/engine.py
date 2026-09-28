@@ -5,6 +5,8 @@ Holds delivery counters and ad-load state, but does no I/O; the caller records e
 
 from __future__ import annotations
 
+import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 
@@ -46,6 +48,7 @@ class Engine:
         curve: UrgencyCurve = UrgencyCurve(),
         ad_load: AdLoadTracker | None = None,
         tolerance_s: int = 0,
+        on_candidates: Callable[[Break, int, list[Candidate]], None] | None = None,
     ):
         self.policy = policy
         self.campaigns = campaigns
@@ -54,6 +57,9 @@ class Engine:
         self.ad_load = ad_load
         self.tolerance_s = tolerance_s
         self.delivered: dict[str, int] = {c.id: 0 for c in campaigns}
+        self.on_candidates = on_candidates  # instrumentation hook; must not mutate its arguments
+        # Cumulative wall time per request-path stage (SPEC §7), for the per-decision cost breakdown.
+        self.stage_s = {"forecast_and_caps": 0.0, "eligibility_and_pricing": 0.0, "pod": 0.0, "record": 0.0}
 
     def guaranteed_value(self, campaign: Campaign, now: int) -> float:
         if self.policy is Policy.HIGHEST_BID:
@@ -83,18 +89,31 @@ class Engine:
         return out
 
     def decide(self, brk: Break) -> Decision:
+        t0 = time.perf_counter()
         self.forecast.observe(brk)
         length = brk.length_s
         if self.ad_load is not None:
             length = min(length, self.ad_load.remaining(brk.viewer, brk.t))
+        t1 = time.perf_counter()
         cands = self.candidates(brk)
+        t2 = time.perf_counter()
+        if self.on_candidates is not None:
+            self.on_candidates(brk, length, cands)
+            t2 = time.perf_counter()
         pod = solve_exact(cands, length, self.tolerance_s)
         underfilled = pod is None
         if pod is None:
             pod = solve_exact(cands, length, tolerance=length)
+        t3 = time.perf_counter()
         for item in pod.items:
             if item.kind is Kind.GUARANTEED:
                 self.delivered[item.ref] += 1
         if self.ad_load is not None:
             self.ad_load.record(brk.viewer, brk.t, pod.duration_s)
+        t4 = time.perf_counter()
+        st = self.stage_s
+        st["forecast_and_caps"] += t1 - t0
+        st["eligibility_and_pricing"] += t2 - t1
+        st["pod"] += t3 - t2
+        st["record"] += t4 - t3
         return Decision(brk, length, pod, underfilled)

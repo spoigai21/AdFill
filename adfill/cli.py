@@ -27,7 +27,7 @@ def _campaign_rows(campaigns) -> list[dict]:
 
 def cmd_run(args: argparse.Namespace) -> None:
     cfg = SimConfig(seed=args.seed, urgency_exponent=args.urgency_exponent, makegood_ratio=args.makegood_ratio,
-                    price_source=args.price_source)
+                    price_source=args.price_source, bid_cpm_median=args.bid_cpm_median)
     if args.source == "movielens":
         start = int(datetime.fromisoformat(args.start).replace(tzinfo=timezone.utc).timestamp())
         world = movielens_world(Path(args.ml_dir), cfg, start, args.days, args.history_days, args.viewer_fraction)
@@ -60,7 +60,7 @@ def cmd_sweep(args: argparse.Namespace) -> None:
 
     out = run_sweep(args.name, args.windows, args.seeds, args.exponents, args.makegood_ratios, args.ml_dir,
                     args.run_dir, args.days, args.history_days, args.workers,
-                    {"price_source": args.price_source})
+                    {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median})
     print(out.with_suffix(".md").read_text())
 
 
@@ -69,6 +69,19 @@ def cmd_prep_criteo(args: argparse.Namespace) -> None:
 
     prepare_cache(Path(args.tsv))
     print(f"wrote {DEFAULT_CACHE}")
+
+
+def cmd_pods(args: argparse.Namespace) -> None:
+    from adfill.report.pods import pod_quality
+
+    cfg = SimConfig(seed=args.seed)
+    start = int(datetime.fromisoformat(args.start).replace(tzinfo=timezone.utc).timestamp())
+    world = movielens_world(Path(args.ml_dir), cfg, start, args.days, args.history_days, 1.0)
+    result = {"window": args.start, "seed": args.seed, "config": cfg.to_dict(), **pod_quality(world, cfg)}
+    out = Path("results") / f"pods-{args.start}-s{args.seed}.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps({k: v for k, v in result.items() if k != "config"}, indent=1))
+    print(f"wrote {out}")
 
 
 def main() -> None:
@@ -86,6 +99,7 @@ def main() -> None:
     r.add_argument("--urgency-exponent", type=float, default=0.5)
     r.add_argument("--makegood-ratio", type=float, default=1.0)
     r.add_argument("--price-source", choices=["criteo", "lognormal"], default="criteo")
+    r.add_argument("--bid-cpm-median", type=float, default=18.0)
     r.add_argument("--run-dir", default="data/runs")
     r.set_defaults(func=cmd_run)
 
@@ -100,8 +114,17 @@ def main() -> None:
     w.add_argument("--history-days", type=int, default=14)
     w.add_argument("--workers", type=int, default=4)
     w.add_argument("--price-source", choices=["criteo", "lognormal"], default="criteo")
+    w.add_argument("--bid-cpm-median", type=float, default=18.0)
     w.add_argument("--run-dir", default="data/runs")
     w.set_defaults(func=cmd_sweep)
+
+    q = sub.add_parser("pods", help="greedy vs exact pod value, and per-decision cost by stage")
+    q.add_argument("--start", default="2018-03-01")
+    q.add_argument("--seed", type=int, default=1)
+    q.add_argument("--days", type=int, default=30)
+    q.add_argument("--history-days", type=int, default=14)
+    q.add_argument("--ml-dir", default="data/ml-25m")
+    q.set_defaults(func=cmd_pods)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

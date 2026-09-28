@@ -335,7 +335,7 @@ highest-bid. Beating each baseline on the axis it is bad at.
 Each phase ends with something complete and reportable. Stopping after any phase leaves a coherent
 project, not a torso.
 
-### Phase 1 — the allocator *(the phase that carries the project)*
+### Phase 1 — the allocator *(the phase that carries the project)* — **done**
 
 Guaranteed and programmatic demand, eligibility, urgency pricing, pod construction, delivery
 accounting, and both baselines.
@@ -347,6 +347,10 @@ behind the same interface Phase 3 replaces, so the allocator does not change whe
 
 **Done when:** a full simulated flight period runs under all three policies and prints the headline
 pair, and the pod solver is verified against brute force on small catalogues.
+
+**Status:** met. Held-out result, the curve-selection protocol, price-level and penalty sensitivity,
+greedy-versus-exact pod quality and the per-decision cost breakdown are in the README; every figure
+has a row in `NUMBERS.md`.
 
 ### Phase 2 — prediction, contextual targeting, and brand safety
 

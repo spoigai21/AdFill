@@ -16,3 +16,10 @@ seed, and how it was measured. A figure without a row does not get published.
 | Criteo rows / campaigns | 16,468,027 / 675 | `data/criteo/criteo_attribution_dataset.tsv.gz` | – | Counted by reading the full file on 2026-09-28. |
 | Revenue lift, highest-bid vs guaranteed-first, held-out | +11.2% mean | `results/holdout-2018.json` | 1, 2, 3 | As the first row, highest-bid over guaranteed-first. |
 | Campaigns delivered in full, AdFill k=4, tuning windows | 22/360 | `results/sweep-phase1.json` | 1, 2, 3 | Makegood 1×, summed over the 9 tuning worlds. |
+| Greedy pod value as share of exact | 98.1% | `results/pods-2018-03-01-s1.json` | 1 | Sum of greedy pod values over sum of exact pod values (both limited to the break length), same candidate sets, 29,095 breaks of one held-out world. |
+| Breaks where greedy is worse than exact | 29.4%; worst single break 49.6% below exact | `results/pods-2018-03-01-s1.json` | 1 | Share of compared breaks with greedy value below exact; largest relative gap on one break. |
+| Exact-fit rate, exact vs greedy | 92.3% vs 88.9% | `results/pods-2018-03-01-s1.json` | 1 | Share of breaks filled to exactly their length. |
+| Pod solve cost, exact vs greedy | 50.8 µs vs 6.0 µs per break | `results/pods-2018-03-01-s1.json` | 1 | Mean wall time per break, same laptop as the per-decision cost row. |
+| Per-decision cost by stage | forecast+caps 1.3, eligibility+pricing 16.9, pod 38.7, record 0.4 µs; total 57.3 µs | `results/pods-2018-03-01-s1.json` | 1 | Mean per break from a run with no instrumentation hook. Lower than the 73.5 µs sweep figure, which ran 4 worlds in parallel on one machine. |
+| Bid-level robustness, $9 median | +27.6% revenue vs guaranteed-first; 239/240 in full | `results/holdout-2018-bid9.json` | 1, 2, 3 | Held-out worlds, k=0.5, makegood 1×, bid median halved. |
+| Bid-level robustness, $36 median | +44.2% revenue vs guaranteed-first; 199/240 in full (k=0.25: 236/240) | `results/holdout-2018-bid36.json` | 1, 2, 3 | Held-out worlds, k=0.5, makegood 1×, bid median doubled. |
