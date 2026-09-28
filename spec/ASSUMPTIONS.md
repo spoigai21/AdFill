@@ -80,3 +80,18 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 | A title with no genome scores is refused wherever safety applies | 4.3% of 2018 ratings | Unverifiable inventory is refused, as brand-safety vendors do. |
 | Safety applies to programmatic bids by the bidder's category as well as to guaranteed deals | — | A buyer's rules follow it into the open market. |
 | `after_booking`: deals sized without the rules, then the rules enforced | — | Isolates what knowing the rules at booking time is worth. |
+
+## Forecasting and booking (Phase 3)
+
+| Rule | Value | Why |
+|---|---|---|
+| Day-of-week factors are pooled over all traffic, from the trailing 14 days | — | Per-segment factors from two weeks are too noisy. |
+| Contention: when n overlapping campaigns match a break holding s ads, each can expect min(1, s/n) of it | s = effective slots per break | Simple shared-capacity model. Ignores programmatic competition and campaigns that finish early. |
+| Effective slots per break = ad seconds a break can hold under the ad-load cap, on history, ÷ mean creative length | ~2.2 | Nominal slots (~3) overstate what the cap allows. |
+| Avails check: one ad per campaign per break; a break holds at most the effective slots of guaranteed ads | — | Same limits the allocator faces. |
+| Avails margin | 10% of capacity held back | Forecast error on a flight's supply is ~6–7%; swept 0–20%. |
+| A deal is refused outright if under 20% of its ask fits; otherwise trimmed to what fits | — | A counter-offer that small is not a deal. |
+| Deals are sold in generation order | — | Order stands in for when each deal was sold. |
+| Refused and trimmed demand does not come back | — | Stated as a limitation: in reality it may be sold later or elsewhere. |
+| Win-rate buyer bids lognormal, median $18 CPM, σ 0.5, independent of the threshold | — | Independence is what Kaplan–Meier requires; stated as its assumption. |
+| The buyer learns the exact threshold on a win, only "threshold > bid" on a loss | — | The feedback second-price-style reporting gives. |

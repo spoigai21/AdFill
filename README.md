@@ -97,6 +97,51 @@ against 6.2% for genres, because briefs cut viewing into smaller, noisier slices
 guaranteed advertiser would prefer: no public data carries either outcome, so both would learn only
 what the simulation invented.
 
+## Phase 3 result: forecasting, avails and win rates
+
+**Forecasting.** A day-of-week forecaster halves short-horizon error on held-out data: next-day breaks
+20.8% → 11.0%, next-day spend 21.9% → 11.9%, and a campaign's remaining supply in the **last three days of
+its flight** 20.4% → 12.0%, exactly where urgency is decided. Over whole flights the two agree.
+
+**The urgency curve, answered.** Phase 1 found the intuitive flat-then-steep curve lost, and blamed a
+forecast that ignores competing campaigns. Adding a contention adjustment (each campaign expects only
+its share of a break's slots when several want it) tested that:
+
+| Forecast | Curve | Revenue vs guaranteed-first | Delivered in full |
+|---|---|---|---|
+| Naive | `k = 0.5` | +19.0% | 240 / 240 |
+| Naive | `k = 2` | +6.6% | 72 / 240 (makegoods $1,033) |
+| Contention-aware | `k = 2` | **+18.9%** | **240 / 240** |
+| Contention-aware | `k = 4` | +21.1% | 234 / 240 (makegoods $0.32) |
+
+Held-out 2018 worlds; `k = 2` was chosen on 2016–17 and committed before this run. With the better
+forecast, the intuitive curve works and every `k` from 0.5 to 2 keeps every promise, so a wrong curve
+choice degrades gently instead of falling off a cliff. It earns no more money; it is harder to break.
+
+**Avails: refusing to oversell.** Each proposed deal is checked with a max-flow over forecast supply
+(one ad per campaign per break, limited slots per break, brand-safe inventory only) and trimmed or
+refused if it would oversell what is already sold. On the Phase 2 book that broke 60 promises:
+
+| Booking | Share of ask booked | Revenue | Delivered in full | Makegoods |
+|---|---|---|---|---|
+| No check | 100% | $22,625 | 180 / 240 | $134 |
+| Check, 10% margin | 76% | $20,654 | **161 / 162** | **$0** |
+| Check, forecast 30% optimistic | 97% | $22,511 | 197 / 226 | $51 |
+
+At a 1× makegood, overselling pays in the short run: missing by a few impressions is cheap, so refusing
+deals costs 8.7% of revenue. The pair shows what that revenue buys: 60 broken promises. An optimistic
+booking forecast slides straight back into them.
+
+**Wrong forecasts.** Biasing the allocator's forecast ±30% barely moves a slack book (+0.4% / −0.9%
+revenue, 239–240 / 240). On a tight one, an optimistic forecast behaves like an over-confident model:
+revenue +0.7%, while campaigns delivered in full fall 231 → 219 and makegoods rise elevenfold.
+
+**Win rates from censored data.** A buyer that learns the price to beat only when it wins, and fits
+the win-rate curve to its wins alone, is off by up to 34 points: aiming to win half its auctions, it bids
+$10.98 CPM and wins 25.6%. Kaplan–Meier, which also uses the losses, is off by under 1 point and
+prescribes $17.59, the true answer. Exact thresholds come from the pod solver at 9,000 sampled breaks;
+22% of breaks cannot be won at any price because of the ad-load cap.
+
 ## Run it
 
 ```sh
@@ -113,6 +158,12 @@ uv run adfill train-models                      # Phase 2: ~2 min, writes data/c
 uv run adfill sweep --name p2-gbm-x1.0 --windows 2018-03-01 2018-09-01 --exponents 0.5 \
   --makegood-ratios 1.0 --price-source criteo-cpa --rate-model gbm
 uv run adfill content                           # brand-safety refusal and forecast accuracy
+uv run adfill forecast                          # Phase 3: forecast validation, held-out
+uv run adfill winrate                           # win-rate curve from censored feedback
+uv run adfill sweep --name p3-holdout-contention --windows 2018-03-01 2018-09-01 --exponents 0.5 1.0 2.0 4.0 \
+  --makegood-ratios 1.0 --price-source criteo-cpa --rate-model gbm --contention
+uv run adfill sweep --name p3-avails-book60-safety --windows 2018-03-01 2018-09-01 --exponents 0.5 \
+  --makegood-ratios 1.0 --price-source criteo-cpa --rate-model gbm --book-share 0.6 --brand-safety on --avails
 ```
 
 Data, unpacked under `data/` (not committed):
@@ -131,8 +182,9 @@ Data, unpacked under `data/` (not committed):
 4. Programmatic prices are real Criteo **display** clearing prices, not video bids. Only won
    impressions have a cost, so the prices are censored, and their level is anchored to an assumed
    $18 median CPM. The shape is data; the level is a choice.
-5. The supply forecast is a trailing average that ignores competing campaigns. The best urgency curve
-   likely depends on forecast quality, so the sweep is repeated when the forecaster improves.
+5. The contention adjustment is a simple shared-slot model: it ignores programmatic competition and
+   campaigns that finish early. Demand refused at booking is simply lost; in reality it may be sold
+   later or elsewhere.
 6. Criteo users and outcomes are **independent of the simulated video context**: the datasets do not
    link, so content cannot influence conversion here.
 7. Brand-safety rules and semantic briefs are **chosen thresholds** over real genome scores.

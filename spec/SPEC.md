@@ -92,6 +92,13 @@ see competing campaigns, so it overstates each one's slack. Which effect dominat
 requires the headline pair across `k`, and the answer is expected to depend on forecast quality, so the
 sweep is repeated once the Phase 3 forecaster exists.
 
+**Answered in Phase 3.** Both effects are real and the forecast decides which wins. With the naive
+forecast, which overstates the supply a campaign can actually obtain, the best curve is front-loaded
+(`k = 0.5`) and steep curves collapse. With a contention-aware forecast, the intuitive steep curve
+(`k = 2`, chosen on tuning windows before the held-out run) earns the same (+18.9% vs +19.0% over
+guaranteed-first, held-out) and every `k` from 0.5 to 2 keeps every promise. The curve and the forecast
+are two halves of one estimate: how likely skipping this slot is to leave the promise short.
+
 The cost of skipping is the full cost of an undelivered impression: the contract payment forgone plus
 the makegood owed.
 
@@ -261,6 +268,10 @@ historical viewing patterns. Refuse to accept a deal that would oversell invento
 **Win-rate curve.** For programmatic, estimate the probability of winning at a given bid — handling
 the censoring in §4.1 rather than ignoring it. State the method and its assumption.
 
+Criteo cannot show this: it holds won impressions only, with no losses to censor. The simulation can:
+the exact threshold a new ad must beat is computed per break from the pod solver, a buyer sees it only
+on wins, and Kaplan–Meier (assuming bids independent of thresholds) is compared with a winners-only fit.
+
 **Validation.** Forecast on one period, measure against a held-out one. Report error on both spend and
 impression counts.
 
@@ -377,13 +388,15 @@ compared against genre matching with the cost of brand-safety refusals quantifie
 **Status: done.** The completion-rate model is cut (§2.3: no public data). Results in the README; every
 figure in `NUMBERS.md`.
 
-### Phase 3 — forecasting and avails
+### Phase 3 — forecasting and avails — **done**
 
 Supply forecasting, oversell refusal, the censored win-rate curve, held-out validation, and the
 wrong-forecast experiment.
 
 **Done when:** forecast error is reported on a held-out period and the revenue/delivery cost of a ±30%
 biased forecast is quantified.
+
+**Status: done.** Results in the README; every figure in `NUMBERS.md`.
 
 ### Phase 4 — reach, frequency, and ad load
 
