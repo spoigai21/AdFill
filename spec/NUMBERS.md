@@ -79,3 +79,11 @@ seed, and how it was measured. A figure without a row does not get published.
 | Uniform rotation, every flight | goal met 21.0%, 14.0%, 9.7%, 4.3%, 3.3%, 1.9%, 1.6% at 5k, 10k, 20k, 50k, 100k, 200k, 500k impressions | `results/bandit-obd.json` | 1 | 1,000 replications per flight. |
 | Recommended table, baselines | guaranteed-first 240/240, reach 162,932; highest-bid 69/240, reach 93,971, revenue −30.3% vs guaranteed-first (mean of per-world lifts; pooled revenue gives −29.7%) | `results/recommended-2018.json` | 1, 2, 3 | Same worlds and settings as the recommended row. Every "revenue vs guaranteed-first" column in the write-up is a mean of per-world lifts. |
 | Phase 2 test set size | 3,465,012 impressions (shown as 3.47M) | `results/predict-metrics.json` | 1 | Rows in days 24–30. |
+| Pod solver checked against brute force | 3,000 random catalogues per run | `tests/test_pod.py` (`max_examples=3000`) | Hypothesis | Property test: exact solver's value equals brute force, and every returned pod is legal. |
+| Tag genome size | 1,128 tags | `data/ml-25m/genome-tags.csv` | – | Rows in the file, counted 2026-09-28. |
+| Bugs logged | 11 | `spec/BUG_LOG.md` | – | Rows B1–B11 at commit 5e968e0. |
+| Tests | 65 | `tests/` | – | `uv run pytest --collect-only` at commit 5e968e0; 5 skip without the datasets. |
+| Guaranteed-first's cash cost vs contract value | 2.79× ($114.96 ÷ $41.18, "nearly 3×") | `results/holdout-2018-guarantee.json` | 1, 2, 3 | Derived from the cost-of-a-guarantee row. |
+| Broken promises before and after the avails check | 60 → 1 (240 − 180 without; 162 − 161 with) | `results/p2c-book60-on.json`, `results/p3-avails-book60-safety.json` | 1, 2, 3 | Derived from the avails rows; the checked book has 162 deals because the rest were refused or trimmed. |
+| Open Bandit rows in the A/B test used | 4,530,676 (452,949 random + 4,077,727 Thompson sampling, "4.5M") | `results/bandit-obd.json` | – | Derived from the off-policy evaluation row; "men" campaign only. |
+| Pod solver's share of decision time | 67.5% (38.7 of 57.3 µs, "two-thirds") | `results/pods-2018-03-01-s1.json` | 1 | Derived from the stage-breakdown row. |
