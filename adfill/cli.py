@@ -246,7 +246,7 @@ def main() -> None:
     e.add_argument("--name", default="spike-2018")
     e.add_argument("--windows", nargs="+", default=["2018-03-01", "2018-09-01"])
     e.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
-    e.add_argument("--multiples", nargs="+", type=float, default=[1, 10, 100])
+    e.add_argument("--multiples", nargs="+", type=float, default=[1.0, 3.0, 10.0, 30.0, 100.0])
     e.add_argument("--ml-dir", default="data/ml-25m")
     e.add_argument("--run-dir", default="data/runs")
     e.add_argument("--workers", type=int, default=4)
