@@ -5,6 +5,7 @@ Holds delivery counters and ad-load state, but does no I/O; the caller records e
 
 from __future__ import annotations
 
+import random
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -51,7 +52,16 @@ class Engine:
         tolerance_s: int = 0,
         on_candidates: Callable[[Break, int, list[Candidate]], None] | None = None,
         new_viewer_prior: float = 0.5,
+        sync_s: int = 0,
+        throttle: str = "none",
+        expected_arrivals: Callable[[Campaign, int], float] | None = None,
+        seed: int = 0,
     ):
+        """`sync_s` > 0 makes eligibility and pricing see delivery counts as of the last sync, as servers
+        deciding in parallel would; true counts still accumulate. `throttle` ("none", "reactive",
+        "scheduled") serves a campaign with probability debt / expected matching arrivals before the next
+        sync: "reactive" expects what arrived in the last interval, "scheduled" also asks
+        `expected_arrivals(campaign, t)` (a known live event) and takes the larger."""
         self.policy = policy
         self.campaigns = campaigns
         self.forecast = forecast
@@ -65,6 +75,12 @@ class Engine:
         # Reach deals: of the matching breaks seen, how many came from viewers not yet reached. The
         # prior (pseudo-count _PRIOR_N) is the history's viewers-per-break ratio.
         self._new_seen = {cid: [_PRIOR_N * new_viewer_prior, float(_PRIOR_N)] for cid in self.reached}
+        self.sync_s, self.throttle, self.expected_arrivals = sync_s, throttle, expected_arrivals
+        self._view = self.delivered  # counts the decision path sees; a stale copy when sync_s > 0
+        self._next_sync = 0
+        self._arrivals: dict[str, int] = {c.id: 0 for c in campaigns}  # matching arrivals this interval
+        self._last_arrivals: dict[str, int] = dict(self._arrivals)
+        self._rng = random.Random(seed)
         self.on_candidates = on_candidates  # instrumentation hook; must not mutate its arguments
         # Cumulative wall time per request-path stage (SPEC §7), for the per-decision cost breakdown.
         self.stage_s = {"forecast_and_caps": 0.0, "eligibility_and_pricing": 0.0, "pod": 0.0, "record": 0.0}
@@ -73,10 +89,26 @@ class Engine:
         new, seen = self._new_seen[campaign_id]
         return new / seen
 
+    def _sync(self, t: int) -> None:
+        if self.sync_s <= 0 or t < self._next_sync:
+            return
+        self._view = dict(self.delivered)
+        self._last_arrivals, self._arrivals = self._arrivals, {k: 0 for k in self._arrivals}
+        self._next_sync = (t // self.sync_s + 1) * self.sync_s
+
+    def _throttled(self, c: Campaign, t: int) -> bool:
+        if self.throttle == "none":
+            return False
+        expect = float(self._last_arrivals[c.id])
+        if self.throttle == "scheduled" and self.expected_arrivals is not None:
+            expect = max(expect, self.expected_arrivals(c, t))
+        debt = c.goal - self._view[c.id]
+        return expect > debt and self._rng.random() >= debt / expect
+
     def guaranteed_value(self, campaign: Campaign, now: int) -> float:
         if self.policy is Policy.HIGHEST_BID:
             return _HIGHEST_BID_LEFTOVER_VALUE
-        debt = campaign.goal - self.delivered[campaign.id]
+        debt = campaign.goal - self._view[campaign.id]
         supply = self.forecast.matching_supply(campaign, now)
         if campaign.goal_type == "reach":
             supply *= self.new_viewer_share(campaign.id)  # only unreached viewers pay down a reach goal
@@ -88,7 +120,10 @@ class Engine:
     def candidates(self, brk: Break) -> list[Candidate]:
         out: list[Candidate] = []
         for c in self.campaigns:
-            if self.delivered[c.id] >= c.goal or not eligible(c, brk):
+            if self._view[c.id] >= c.goal or not eligible(c, brk):
+                continue
+            self._arrivals[c.id] += 1
+            if self._throttled(c, brk.t):
                 continue
             if c.goal_type == "reach":
                 fresh = brk.viewer not in self.reached[c.id]
@@ -115,6 +150,7 @@ class Engine:
 
     def decide(self, brk: Break) -> Decision:
         t0 = time.perf_counter()
+        self._sync(brk.t)
         self.forecast.observe(brk)
         length = brk.length_s
         if self.ad_load is not None:

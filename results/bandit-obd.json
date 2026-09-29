@@ -1,0 +1,368 @@
+{
+ "ope": {
+  "campaign": "men",
+  "items": 34,
+  "random_rows": 452949,
+  "bts_rows": 4077727,
+  "random_propensity": 0.029411764705882353,
+  "truth_bts_ctr": 0.006743,
+  "estimates": {
+   "naive": 0.005124,
+   "ips": 0.006663,
+   "snips": 0.006779,
+   "dm": 0.006314,
+   "dr": 0.006822
+  },
+  "relative_error": {
+   "naive": 0.24,
+   "ips": 0.0118,
+   "snips": 0.0054,
+   "dm": 0.0636,
+   "dr": 0.0118
+  },
+  "ci95": {
+   "ips": [
+    0.006169,
+    0.007215
+   ],
+   "snips": [
+    0.006283,
+    0.007334
+   ],
+   "dr": [
+    0.006328,
+    0.007373
+   ]
+  },
+  "truth_inside_ci95": {
+   "ips": true,
+   "snips": true,
+   "dr": true
+  },
+  "rows_used": 452949
+ },
+ "creative": {
+  "items": 34,
+  "k": 5,
+  "goal_share_of_best": 0.9,
+  "batch": 1000,
+  "commit_share": 0.3,
+  "reps": 1000,
+  "true_rate": {
+   "min": 0.00312,
+   "median": 0.00473,
+   "max": 0.00828
+  },
+  "prior_impressions_per_item": 2285,
+  "by_flight_impressions": {
+   "5000": {
+    "oracle": {
+     "mean_clicks": 34.28,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 0.792,
+     "shortfall_share_of_goal": 0.0247
+    },
+    "uniform": {
+     "mean_clicks": 24.84,
+     "regret_vs_oracle": 9.45,
+     "regret_share": 0.2434,
+     "goal_met_share": 0.21,
+     "shortfall_share_of_goal": 0.1872
+    },
+    "greedy_prior": {
+     "mean_clicks": 26.55,
+     "regret_vs_oracle": 7.73,
+     "regret_share": 0.19,
+     "goal_met_share": 0.386,
+     "shortfall_share_of_goal": 0.1695
+    },
+    "ts": {
+     "mean_clicks": 26.61,
+     "regret_vs_oracle": 7.67,
+     "regret_share": 0.1921,
+     "goal_met_share": 0.333,
+     "shortfall_share_of_goal": 0.1476
+    },
+    "ts_prior": {
+     "mean_clicks": 26.84,
+     "regret_vs_oracle": 7.44,
+     "regret_share": 0.1801,
+     "goal_met_share": 0.34,
+     "shortfall_share_of_goal": 0.1484
+    },
+    "ts_deadline": {
+     "mean_clicks": 27.1,
+     "regret_vs_oracle": 7.18,
+     "regret_share": 0.172,
+     "goal_met_share": 0.363,
+     "shortfall_share_of_goal": 0.1409
+    }
+   },
+   "10000": {
+    "oracle": {
+     "mean_clicks": 67.87,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 0.832,
+     "shortfall_share_of_goal": 0.013
+    },
+    "uniform": {
+     "mean_clicks": 50.05,
+     "regret_vs_oracle": 17.82,
+     "regret_share": 0.243,
+     "goal_met_share": 0.14,
+     "shortfall_share_of_goal": 0.1752
+    },
+    "greedy_prior": {
+     "mean_clicks": 53.53,
+     "regret_vs_oracle": 14.34,
+     "regret_share": 0.1864,
+     "goal_met_share": 0.376,
+     "shortfall_share_of_goal": 0.1574
+    },
+    "ts": {
+     "mean_clicks": 54.56,
+     "regret_vs_oracle": 13.31,
+     "regret_share": 0.1806,
+     "goal_met_share": 0.279,
+     "shortfall_share_of_goal": 0.1193
+    },
+    "ts_prior": {
+     "mean_clicks": 54.97,
+     "regret_vs_oracle": 12.9,
+     "regret_share": 0.1689,
+     "goal_met_share": 0.321,
+     "shortfall_share_of_goal": 0.1227
+    },
+    "ts_deadline": {
+     "mean_clicks": 55.58,
+     "regret_vs_oracle": 12.29,
+     "regret_share": 0.159,
+     "goal_met_share": 0.356,
+     "shortfall_share_of_goal": 0.1143
+    }
+   },
+   "20000": {
+    "oracle": {
+     "mean_clicks": 135.62,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 0.902,
+     "shortfall_share_of_goal": 0.005
+    },
+    "uniform": {
+     "mean_clicks": 100.22,
+     "regret_vs_oracle": 35.4,
+     "regret_share": 0.2461,
+     "goal_met_share": 0.097,
+     "shortfall_share_of_goal": 0.1722
+    },
+    "greedy_prior": {
+     "mean_clicks": 106.32,
+     "regret_vs_oracle": 29.29,
+     "regret_share": 0.1981,
+     "goal_met_share": 0.353,
+     "shortfall_share_of_goal": 0.1553
+    },
+    "ts": {
+     "mean_clicks": 113.97,
+     "regret_vs_oracle": 21.65,
+     "regret_share": 0.1499,
+     "goal_met_share": 0.306,
+     "shortfall_share_of_goal": 0.081
+    },
+    "ts_prior": {
+     "mean_clicks": 114.22,
+     "regret_vs_oracle": 21.4,
+     "regret_share": 0.1442,
+     "goal_met_share": 0.358,
+     "shortfall_share_of_goal": 0.0839
+    },
+    "ts_deadline": {
+     "mean_clicks": 115.11,
+     "regret_vs_oracle": 20.51,
+     "regret_share": 0.138,
+     "goal_met_share": 0.39,
+     "shortfall_share_of_goal": 0.0806
+    }
+   },
+   "50000": {
+    "oracle": {
+     "mean_clicks": 339.51,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 0.969,
+     "shortfall_share_of_goal": 0.0009
+    },
+    "uniform": {
+     "mean_clicks": 249.29,
+     "regret_vs_oracle": 90.22,
+     "regret_share": 0.2547,
+     "goal_met_share": 0.043,
+     "shortfall_share_of_goal": 0.1764
+    },
+    "greedy_prior": {
+     "mean_clicks": 267.41,
+     "regret_vs_oracle": 72.1,
+     "regret_share": 0.1974,
+     "goal_met_share": 0.377,
+     "shortfall_share_of_goal": 0.1513
+    },
+    "ts": {
+     "mean_clicks": 302.99,
+     "regret_vs_oracle": 36.53,
+     "regret_share": 0.1037,
+     "goal_met_share": 0.468,
+     "shortfall_share_of_goal": 0.0341
+    },
+    "ts_prior": {
+     "mean_clicks": 299.16,
+     "regret_vs_oracle": 40.35,
+     "regret_share": 0.1129,
+     "goal_met_share": 0.462,
+     "shortfall_share_of_goal": 0.0476
+    },
+    "ts_deadline": {
+     "mean_clicks": 301.02,
+     "regret_vs_oracle": 38.49,
+     "regret_share": 0.1071,
+     "goal_met_share": 0.478,
+     "shortfall_share_of_goal": 0.0445
+    }
+   },
+   "100000": {
+    "oracle": {
+     "mean_clicks": 679.25,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 0.997,
+     "shortfall_share_of_goal": 0.0
+    },
+    "uniform": {
+     "mean_clicks": 499.69,
+     "regret_vs_oracle": 179.56,
+     "regret_share": 0.2548,
+     "goal_met_share": 0.033,
+     "shortfall_share_of_goal": 0.1739
+    },
+    "greedy_prior": {
+     "mean_clicks": 533.26,
+     "regret_vs_oracle": 145.99,
+     "regret_share": 0.2019,
+     "goal_met_share": 0.384,
+     "shortfall_share_of_goal": 0.1492
+    },
+    "ts": {
+     "mean_clicks": 629.6,
+     "regret_vs_oracle": 49.65,
+     "regret_share": 0.0726,
+     "goal_met_share": 0.73,
+     "shortfall_share_of_goal": 0.0109
+    },
+    "ts_prior": {
+     "mean_clicks": 623.04,
+     "regret_vs_oracle": 56.21,
+     "regret_share": 0.0811,
+     "goal_met_share": 0.653,
+     "shortfall_share_of_goal": 0.0198
+    },
+    "ts_deadline": {
+     "mean_clicks": 627.51,
+     "regret_vs_oracle": 51.73,
+     "regret_share": 0.0737,
+     "goal_met_share": 0.697,
+     "shortfall_share_of_goal": 0.0155
+    }
+   },
+   "200000": {
+    "oracle": {
+     "mean_clicks": 1357.88,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 1.0,
+     "shortfall_share_of_goal": 0.0
+    },
+    "uniform": {
+     "mean_clicks": 999.94,
+     "regret_vs_oracle": 357.94,
+     "regret_share": 0.2545,
+     "goal_met_share": 0.019,
+     "shortfall_share_of_goal": 0.1732
+    },
+    "greedy_prior": {
+     "mean_clicks": 1066.9,
+     "regret_vs_oracle": 290.98,
+     "regret_share": 0.2016,
+     "goal_met_share": 0.393,
+     "shortfall_share_of_goal": 0.1503
+    },
+    "ts": {
+     "mean_clicks": 1290.6,
+     "regret_vs_oracle": 67.28,
+     "regret_share": 0.0496,
+     "goal_met_share": 0.926,
+     "shortfall_share_of_goal": 0.0021
+    },
+    "ts_prior": {
+     "mean_clicks": 1282.89,
+     "regret_vs_oracle": 74.98,
+     "regret_share": 0.0547,
+     "goal_met_share": 0.877,
+     "shortfall_share_of_goal": 0.0055
+    },
+    "ts_deadline": {
+     "mean_clicks": 1289.98,
+     "regret_vs_oracle": 67.9,
+     "regret_share": 0.0495,
+     "goal_met_share": 0.881,
+     "shortfall_share_of_goal": 0.0048
+    }
+   },
+   "500000": {
+    "oracle": {
+     "mean_clicks": 3394.7,
+     "regret_vs_oracle": 0.0,
+     "regret_share": 0.0,
+     "goal_met_share": 1.0,
+     "shortfall_share_of_goal": 0.0
+    },
+    "uniform": {
+     "mean_clicks": 2497.52,
+     "regret_vs_oracle": 897.19,
+     "regret_share": 0.2556,
+     "goal_met_share": 0.016,
+     "shortfall_share_of_goal": 0.174
+    },
+    "greedy_prior": {
+     "mean_clicks": 2670.62,
+     "regret_vs_oracle": 724.08,
+     "regret_share": 0.2013,
+     "goal_met_share": 0.392,
+     "shortfall_share_of_goal": 0.1489
+    },
+    "ts": {
+     "mean_clicks": 3302.7,
+     "regret_vs_oracle": 92.0,
+     "regret_share": 0.0277,
+     "goal_met_share": 0.99,
+     "shortfall_share_of_goal": 0.0004
+    },
+    "ts_prior": {
+     "mean_clicks": 3295.3,
+     "regret_vs_oracle": 99.41,
+     "regret_share": 0.0296,
+     "goal_met_share": 0.986,
+     "shortfall_share_of_goal": 0.0005
+    },
+    "ts_deadline": {
+     "mean_clicks": 3302.1,
+     "regret_vs_oracle": 92.61,
+     "regret_share": 0.0275,
+     "goal_met_share": 0.983,
+     "shortfall_share_of_goal": 0.0008
+    }
+   }
+  }
+ }
+}

@@ -128,6 +128,28 @@ def cmd_winrate(args: argparse.Namespace) -> None:
     print(json.dumps(result, indent=1))
 
 
+def cmd_spike(args: argparse.Namespace) -> None:
+    from adfill.report.spike import run
+
+    config = {"price_source": "criteo-cpa", "rate_model": "gbm"}
+    rows = run(args.name, args.windows, args.seeds, args.multiples, args.ml_dir, args.run_dir, args.workers, config)
+    out = Path("results") / f"{args.name}.json"
+    out.write_text(json.dumps({"config": config, "rows": rows}, indent=1) + "\n")
+    print(f"wrote {out}")
+
+
+def cmd_bandit(args: argparse.Namespace) -> None:
+    from adfill.bandit.creative import run as creative
+    from adfill.bandit.ope import run as ope
+
+    result = {"ope": ope(n_boot=args.boot), "creative": creative(args.flights, args.reps, args.seed)}
+    out = Path("results") / f"{args.name}.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps(result["ope"], indent=1))
+    for n, v in result["creative"]["by_flight_impressions"].items():
+        print(n, {k: (x["goal_met_share"], x["regret_share"]) for k, x in v.items()})
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="adfill")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -219,6 +241,24 @@ def main() -> None:
     v.add_argument("--bid-sigma", type=float, default=0.5)
     v.add_argument("--ml-dir", default="data/ml-25m")
     v.set_defaults(func=cmd_winrate)
+
+    e = sub.add_parser("spike", help="live-event spike: overshoot vs arrival rate, counter sync and throttles")
+    e.add_argument("--name", default="spike-2018")
+    e.add_argument("--windows", nargs="+", default=["2018-03-01", "2018-09-01"])
+    e.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
+    e.add_argument("--multiples", nargs="+", type=float, default=[1, 10, 100])
+    e.add_argument("--ml-dir", default="data/ml-25m")
+    e.add_argument("--run-dir", default="data/runs")
+    e.add_argument("--workers", type=int, default=4)
+    e.set_defaults(func=cmd_spike)
+
+    d = sub.add_parser("bandit", help="off-policy evaluation and deadline-constrained creative bandit (OBD)")
+    d.add_argument("--name", default="bandit-obd")
+    d.add_argument("--flights", nargs="+", type=int, default=[5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000])
+    d.add_argument("--reps", type=int, default=1_000)
+    d.add_argument("--boot", type=int, default=500)
+    d.add_argument("--seed", type=int, default=1)
+    d.set_defaults(func=cmd_bandit)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

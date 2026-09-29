@@ -168,6 +168,63 @@ exact counts for every campaign and **zero** frequency-cap and ad-load violation
 beacons as they arrive overbills by 5%, miscounts every campaign, and reports thousands of cap
 violations that never happened.
 
+## Phase 5 result: the live-event spike
+
+A national live break: the whole audience hits one two-minute break within ten seconds, so a deal's
+entire day of inventory appears at once. The engine is single-threaded, so the thing a real deployment
+gets wrong has to be modelled: many servers deciding in parallel, each seeing delivery counters that are
+up to a second stale.
+
+| Audience (× a normal day) | Arrivals / s | Stale counters: overshoot | Deals over goal | Scheduled throttle: overshoot |
+|---|---|---|---|---|
+| 1× | 113 | 460 | 21 / 64 | 2 |
+| 3× | 340 | 5,004 | 64 / 64 | 38 |
+| 10× | 1,134 | 20,937 | 63 / 64 | 92 |
+| 30× | 3,403 | 98,749 | 64 / 64 | 318 |
+| 100× | 11,344 | **390,392** | 64 / 64 | **227** |
+
+**What breaks, and when.** The rule "no deal exceeds its goal by more than one impression" breaks first,
+already at normal-day arrival rates. Money breaks later: at 100×, one deal received 28× its entire goal,
+390,000 impressions went out unbilled, and revenue fell 1.6%. Throttling on last second's arrivals barely
+helps (338,343 overshoot at 100×) because the first second of a spike is gone before it reacts. A
+throttle scheduled from the event's planned audience holds the goal with no revenue cost. Getting that
+audience wrong is asymmetric: overestimating it by 30% is safe (19 overshoot), underestimating it by 30%
+leaks 9,460.
+
+## Phase 6 result: exploration that owes a deadline
+
+**Off-policy evaluation, checked against the truth.** The Open Bandit Dataset logs a uniform-random
+policy and a Thompson-sampling policy run side by side in one A/B test, with the true propensity of every
+action. Estimating Thompson sampling's click rate from the random log alone:
+
+| Estimator | Estimate | Error vs on-policy truth (0.674%) |
+|---|---|---|
+| Naive (random log's own rate) | 0.512% | 24.0% |
+| Direct method (click model) | 0.631% | 6.4% |
+| IPS | 0.666% | 1.2% |
+| Self-normalised IPS | 0.678% | **0.5%** |
+| Doubly robust | 0.682% | 1.2% |
+
+The truth falls inside the 95% bootstrap interval of IPS, SNIPS and DR.
+
+**Creative selection when the goal has a deadline.** A campaign runs five creatives, each a real OBD item
+with its real click rate, and has sold a click goal it can only meet by finding a good one. Every
+impression spent exploring is a click the goal may not get back.
+
+| Flight (impressions) | Trust last flight, never explore | Best Thompson-sampling variant | Rotate evenly |
+|---|---|---|---|
+| 5,000 | **38.6%** goals met | 36.3% | 21.0% |
+| 10,000 | **37.6%** | 35.6% | 14.0% |
+| 20,000 | 35.3% | **39.0%** | 9.7% |
+| 100,000 | 38.4% | **73.0%** | 3.3% |
+| 500,000 | 39.2% | **99.0%** | 1.6% |
+
+Below about 15,000 impressions, exploring stops being worth it **for the goal**, even though it still
+wins on average clicks (17.2% vs 19.0% regret at 5,000). A goal is a threshold, not an average, and
+trusting a decent prior is a gamble that pays often enough on a short flight. Committing to the best
+creative for the last 30% of the flight helps short and medium flights; rotating creatives evenly, a
+common default, is the worst choice at every length.
+
 ## Run it
 
 ```sh
@@ -186,6 +243,8 @@ uv run adfill sweep --name p2-gbm-x1.0 --windows 2018-03-01 2018-09-01 --exponen
 uv run adfill content                           # brand-safety refusal and forecast accuracy
 uv run adfill forecast                          # Phase 3: forecast validation, held-out
 uv run adfill winrate                           # win-rate curve from censored feedback
+uv run adfill spike                             # Phase 5: live event, 1x to 100x a normal day
+uv run adfill bandit                            # Phase 6: off-policy evaluation, creative bandit (needs OBD)
 uv run adfill sweep --name p4-cap1 --windows 2018-03-01 2018-09-01 --exponents 0.5 --makegood-ratios 1.0 \
   --price-source criteo-cpa --rate-model gbm --freq-cap 1   # reach, frequency and beacon audit per row
 uv run adfill sweep --name p3-holdout-contention --windows 2018-03-01 2018-09-01 --exponents 0.5 1.0 2.0 4.0 \
@@ -199,6 +258,8 @@ Data, unpacked under `data/` (not committed):
 - [Criteo Attribution Modeling for Bidding](http://go.criteo.net/criteo-research-attribution-dataset.zip)
   (CC BY-NC-SA 4.0), unzipped, at `data/criteo/criteo_attribution_dataset.tsv.gz`. The dataset's README undercounts it; measured:
   16,468,027 rows and 675 campaigns.
+- [Open Bandit Dataset](https://research.zozo.com/data_release/open_bandit_dataset.zip) (CC BY 4.0) at
+  `data/obd/open_bandit_dataset/`; Phase 6 uses only `random/men` and `bts/men`.
 
 ## Limitations
 
@@ -216,5 +277,9 @@ Data, unpacked under `data/` (not committed):
 6. Criteo users and outcomes are **independent of the simulated video context**: the datasets do not
    link, so content cannot influence conversion here.
 7. Brand-safety rules and semantic briefs are **chosen thresholds** over real genome scores.
-8. Timing figures are **per-decision costs on one laptop** (57 µs, pure Python), not throughput
+8. Phase 5 models parallel serving as counters synced every second; it is a model of staleness, not a
+   distributed system.
+9. Phase 6's creatives are Open Bandit **fashion recommendations**, not video ads: the click rates and
+   their spread are real, the setting is borrowed.
+10. Timing figures are **per-decision costs on one laptop** (57 µs, pure Python), not throughput
    claims.

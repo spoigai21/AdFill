@@ -107,3 +107,26 @@ Everything the datasets cannot supply, one rule per line, with why. Values live 
 | Which deals buy reach | 25% in reach experiments, own random stream | Adding reach deals must not change the Phase 1–3 book (BUG_LOG B7). |
 | Delivery beacons: 5% duplicated, delayed uniformly 0–1 h, processed in arrival order | — | Shape of a real client-side reporting pipeline. |
 | Decisions, not beacons, drive pacing and caps | — | Beacons are for billing and audit; the decision path already knows what it served. |
+
+## Live-event spike (Phase 5)
+
+| Rule | Value | Why |
+|---|---|---|
+| Event audience = multiple × an average window day's breaks, all new viewers, one 120 s break each | 1×–100× | Sized relative to normal traffic so the arrival rate is the variable. |
+| Arrivals uniform over 10 s, day 10 of the window at 20:00 UTC | — | "Whole audience within seconds." |
+| Event genre "Live" | — | Genre-targeted deals do not match it; untargeted and TV-only deals do (64 across the 6 worlds). |
+| Parallel servers modelled as delivery counters synced every 1 s | — | Every decision in the same second sees the same counts. |
+| Frequency caps and reach sets stay per viewer and live | — | A viewer's session is sticky to one server. |
+| Scheduled throttle knows the planned audience (exact, −30% or +30%) and the event window | — | Live events are scheduled; their audience is forecast in advance. |
+
+## Bandit (Phase 6)
+
+| Rule | Value | Why |
+|---|---|---|
+| Creatives are Open Bandit Dataset items ("men" campaign, 34 items) with their real click rates | — | Real per-arm rates. They are fashion recommendations, not video ads: stated as a limitation. |
+| True rates from days 2–7 of the uniform-random log; prior ("last flight") from day 1 | ~2,300 prior impressions per item | Unbiased (uniform logging); prior and truth never overlap. |
+| K = 5 creatives per campaign, drawn at random from the 34 | 1,000 replications per flight length | Averages over which creatives a campaign happens to have. |
+| Click goal = 0.9 × flight impressions × best creative's rate | — | Meetable only by finding and using a good creative: exploration costs delivery. |
+| Posteriors update every 1,000 impressions | — | Serving systems update in batches. |
+| Deadline commit: after 70% of the flight, show the posterior-best creative only | — | Simple rule for "the remaining impressions can no longer repay learning". |
+| Thompson-sampling action distribution for OPE = its share of impressions per item, hour and position | — | The logged BTS policy is context-free. |

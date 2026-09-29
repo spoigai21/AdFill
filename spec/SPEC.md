@@ -410,14 +410,18 @@ duplicate delivery reports.
 **Status: done.** Caps are enforced on decisions; billing reconciles beacons by impression id and
 checks caps and ad load on serve time. Results in the README; every figure in `NUMBERS.md`.
 
-### Phase 5 — the live-event spike
+### Phase 5 — the live-event spike — **done**
 
 A national live break where the entire audience arrives within seconds, so a campaign's whole day of
 inventory appears at once. Pacing and caps must hold when supply is not spread over time.
 
 **Done when:** the spike scenario is characterised, including what breaks and at what arrival rate.
 
-### Phase 6 — creative selection as a constrained bandit *(optional, and the deepest)*
+**Status: done.** What breaks is the goal invariant, through stale counters, from normal arrival rates
+up; money breaks from about 30× a normal day. A reactive throttle does not help (the first second is
+already lost); a throttle scheduled from the event's planned audience does. Results in the README.
+
+### Phase 6 — creative selection as a constrained bandit *(optional, and the deepest)* — **done**
 
 A campaign has several creative variants whose true rates are unknown until shown, so the engine must
 explore. **Exploration costs delivery** — impressions spent learning are impressions not spent
@@ -433,6 +437,9 @@ so the estimator rests on recorded probabilities instead of an assumption.
 start; the delivery cost of exploration is quantified; the crossover is identified where exploring stops
 being worth it because the deadline is near; and an off-policy estimate is validated against the
 dataset's logged propensities.
+
+**Status: done.** Off-policy estimates are validated against the dataset's on-policy ground truth (its
+A/B design logs both policies). Creatives are real OBD items; results in the README.
 
 ---
 
