@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -58,12 +59,37 @@ def cmd_run(args: argparse.Namespace) -> None:
     print(f"\nwrote {out}")
 
 
+# The configuration the results recommend, assembled from Phases 2-4. Flags set explicitly still win.
+RECOMMENDED = {
+    "price_source": "criteo-cpa",   # Phase 2: performance demand valued by the conversion model
+    "rate_model": "gbm",
+    "forecast_contention": True,    # Phase 3: contention-aware forecast ...
+    "urgency_exponent": 2.0,        # ... with the curve chosen for it on tuning windows
+    "avails_check": True,           # Phase 3: refuse deals that would oversell
+    "freq_cap": 1,                  # Phase 4: +37% reach for 0.6% of revenue
+}
+
+
+def _apply_preset(args: argparse.Namespace, config: dict) -> tuple[dict, list[float]]:
+    """Fill every setting the user did not pass explicitly from the preset."""
+    if args.preset != "recommended":
+        return config, args.exponents or [0.5, 1.0, 1.5, 2.0, 4.0]
+    explicit = {a.lstrip("-").replace("-", "_") for a in sys.argv if a.startswith("--")}
+    flag_for = {"price_source": "price_source", "rate_model": "rate_model", "forecast_contention": "contention",
+                "avails_check": "avails", "freq_cap": "freq_cap"}
+    for key, flag in flag_for.items():
+        if flag not in explicit:
+            config[key] = RECOMMENDED[key]
+    exponents = args.exponents or [RECOMMENDED["urgency_exponent"]]
+    if len(exponents) == 1:
+        config["urgency_exponent"] = exponents[0]  # so the recorded config matches what ran
+    return config, exponents
+
+
 def cmd_sweep(args: argparse.Namespace) -> None:
     from adfill.sweep import run_sweep
 
-    out = run_sweep(args.name, args.windows, args.seeds, args.exponents, args.makegood_ratios, args.ml_dir,
-                    args.run_dir, args.days, args.history_days, args.workers,
-                    {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median,
+    config, exponents = _apply_preset(args, {"price_source": args.price_source, "bid_cpm_median": args.bid_cpm_median,
                      "rate_model": args.rate_model, "rate_inflation": args.rate_inflation,
                      "targeting_mode": args.targeting_mode, "brand_safety": args.brand_safety,
                      "guaranteed_book_share": args.book_share, "forecast_model": args.forecast_model,
@@ -71,6 +97,8 @@ def cmd_sweep(args: argparse.Namespace) -> None:
                      "avails_check": args.avails, "avails_margin": args.avails_margin,
                      "booking_forecast_bias": args.booking_bias, "reach_share": args.reach_share,
                      "freq_cap": args.freq_cap})
+    out = run_sweep(args.name, args.windows, args.seeds, exponents, args.makegood_ratios, args.ml_dir,
+                    args.run_dir, args.days, args.history_days, args.workers, config)
     print(out.with_suffix(".md").read_text())
 
 
@@ -150,6 +178,15 @@ def cmd_bandit(args: argparse.Namespace) -> None:
         print(n, {k: (x["goal_met_share"], x["regret_share"]) for k, x in v.items()})
 
 
+def cmd_guarantee(args: argparse.Namespace) -> None:
+    from adfill.report.guarantee import summarize
+
+    result = summarize(Path("results") / f"{args.result}.json", args.exponent, args.makegood_ratio)
+    out = Path("results") / f"{args.result}-guarantee.json"
+    out.write_text(json.dumps(result, indent=1) + "\n")
+    print(json.dumps(result, indent=1))
+
+
 def main() -> None:
     p = argparse.ArgumentParser(prog="adfill")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -177,7 +214,10 @@ def main() -> None:
     w.add_argument("--name", required=True)
     w.add_argument("--windows", nargs="+", default=["2016-03-01", "2016-09-01", "2017-03-01"])
     w.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3])
-    w.add_argument("--exponents", nargs="+", type=float, default=[0.5, 1.0, 1.5, 2.0, 4.0])
+    w.add_argument("--exponents", nargs="+", type=float, default=None,
+                   help="urgency curve exponents (default 0.5 1 1.5 2 4; 2 with --preset recommended)")
+    w.add_argument("--preset", choices=["recommended"], default=None,
+                   help="the configuration the results recommend; explicit flags still win")
     w.add_argument("--makegood-ratios", nargs="+", type=float, default=[0.5, 1.0, 2.0])
     w.add_argument("--ml-dir", default="data/ml-25m")
     w.add_argument("--days", type=int, default=30)
@@ -259,6 +299,12 @@ def main() -> None:
     d.add_argument("--boot", type=int, default=500)
     d.add_argument("--seed", type=int, default=1)
     d.set_defaults(func=cmd_bandit)
+
+    g = sub.add_parser("guarantee", help="cost of a guarantee and delivery distribution from a sweep result")
+    g.add_argument("--result", required=True, help="sweep name, e.g. holdout-2018")
+    g.add_argument("--exponent", type=float, default=None, help="AdFill exponent to report (default: all)")
+    g.add_argument("--makegood-ratio", type=float, default=1.0)
+    g.set_defaults(func=cmd_guarantee)
 
     c = sub.add_parser("prep-criteo", help="cache campaign and cost columns from the Criteo attribution TSV")
     c.add_argument("--tsv", default="data/criteo/criteo_attribution_dataset.tsv.gz")

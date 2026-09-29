@@ -221,6 +221,41 @@ trusting a decent prior is a gamble that pays often enough on a short flight. Co
 creative for the last 30% of the flight helps short and medium flights; rotating creatives evenly, a
 common default, is the worst choice at every length.
 
+## Across phases: the cost of a guarantee, and the recommended setup
+
+**What keeping a promise costs.** Highest-bid ignores promises, so the cash it collects is the ceiling.
+The gap between that and a policy's cash is what the policy gave up to deliver its guarantees. Highest-bid
+still delivers some guarantees from slots nobody bid on, so the fair price is per guaranteed impression
+*beyond* those:
+
+| World | Guaranteed-first gives up | AdFill gives up | Those impressions earn under contract |
+|---|---|---|---|
+| Phase 1 (pay-per-impression prices) | $114.96 per 1,000 | **$7.88** per 1,000 | $41.18 per 1,000 |
+| Phase 2 (pay-per-conversion demand) | $40.66 per 1,000 | **$11.32** per 1,000 | $41.18 per 1,000 |
+
+Serving promises first can cost more cash than the promises bring in. AdFill keeps the same promises by
+spending them on slots cash did not want much.
+
+**How evenly promises are kept.** Per campaign, delivery as a share of its goal (Phase 1 world): under
+AdFill the lowest of 240 campaigns reached 98.9% and only one fell below 99%. Under highest-bid the median
+campaign reached 55% and the bottom tenth 2%; 169 of 240 fell below 90%. No policy delivered past a goal.
+
+**The recommended setup.** `--preset recommended` combines what the phases found: pay-per-conversion
+demand valued by the gradient-boosted model, the contention-aware forecast with its curve (`k = 2`), a
+1-per-day frequency cap, and the avails check. Run as a whole on the held-out worlds:
+
+| Policy | Revenue vs guaranteed-first | Delivered in full | Reach | Cash given up per extra 1,000 guaranteed |
+|---|---|---|---|---|
+| Guaranteed-first | — | 240 / 240 | 162,932 | $39.17 |
+| Highest bid | −30.3% | 69 / 240 | 93,971 | — |
+| **AdFill (recommended)** | **+16.9%** (+13.8% to +18.5%) | **240 / 240** | **160,208** | **$13.92** |
+
+It earns 1.6% less than the best revenue-only setup: the frequency cap and the contention-aware forecast
+each cost about 0.6% on their own, and a little more together. The lift over guaranteed-first narrows
+more (+16.9% vs +19.1%) because the cap raises guaranteed-first's revenue too. What the 1.6% buys: 37%
+more reach, and a forecast under which a wrong curve choice degrades gently. For live events, add the
+scheduled throttle (Phase 5).
+
 ## Reproduce
 
 Download the data into `data/` (not committed):
@@ -263,6 +298,12 @@ uv run adfill sweep --name p4-cap1 --windows 2018-03-01 2018-09-01 --exponents 0
 # Phase 5 and 6
 uv run adfill spike              # ~15 min
 uv run adfill bandit             # ~4 min
+
+# Across phases
+uv run adfill guarantee --result holdout-2018 --exponent 0.5
+uv run adfill guarantee --result p2-gbm-x1.0 --exponent 0.5
+uv run adfill sweep --name recommended-2018 --windows 2018-03-01 2018-09-01 --makegood-ratios 1.0 --preset recommended
+uv run adfill guarantee --result recommended-2018
 ```
 
 Every other file in this folder comes from these commands with different flags. Sweep and `run` outputs

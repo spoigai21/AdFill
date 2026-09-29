@@ -1,0 +1,56 @@
+{
+ "guaranteed_first": {
+  "programmatic_revenue": 8184.45,
+  "guaranteed_revenue": 10500.19,
+  "guaranteed_impressions": 254964,
+  "cash_forgone_vs_highest_bid": 4939.34,
+  "cash_forgone_per_1000_guaranteed": 19.37,
+  "cash_forgone_per_extra_1000_guaranteed": 40.66,
+  "contract_revenue_per_1000_guaranteed": 41.18,
+  "delivery_share": {
+   "campaigns": 240,
+   "min": 1.0,
+   "p10": 1.0,
+   "median": 1.0,
+   "below_90pct": 0,
+   "below_99pct": 0
+  },
+  "campaigns_over_goal": 0
+ },
+ "highest_bid": {
+  "programmatic_revenue": 13123.79,
+  "guaranteed_revenue": 5440.14,
+  "guaranteed_impressions": 133491,
+  "cash_forgone_vs_highest_bid": 0.0,
+  "cash_forgone_per_1000_guaranteed": 0.0,
+  "cash_forgone_per_extra_1000_guaranteed": null,
+  "contract_revenue_per_1000_guaranteed": 40.75,
+  "delivery_share": {
+   "campaigns": 240,
+   "min": 0.0,
+   "p10": 0.0224,
+   "median": 0.5524,
+   "below_90pct": 169,
+   "below_99pct": 173
+  },
+  "campaigns_over_goal": 0
+ },
+ "adfill": {
+  "programmatic_revenue": 11748.54,
+  "guaranteed_revenue": 10500.19,
+  "guaranteed_impressions": 254964,
+  "cash_forgone_vs_highest_bid": 1375.25,
+  "cash_forgone_per_1000_guaranteed": 5.39,
+  "cash_forgone_per_extra_1000_guaranteed": 11.32,
+  "contract_revenue_per_1000_guaranteed": 41.18,
+  "delivery_share": {
+   "campaigns": 240,
+   "min": 1.0,
+   "p10": 1.0,
+   "median": 1.0,
+   "below_90pct": 0,
+   "below_99pct": 0
+  },
+  "campaigns_over_goal": 0
+ }
+}

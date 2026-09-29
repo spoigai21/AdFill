@@ -36,6 +36,9 @@ a pair — revenue, and campaigns delivered in full — and it showed up in ever
   flights of 10,000 impressions or fewer. ([Phase 6](results/README.md#phase-6-exploration-that-owes-a-deadline))
 
 Also measured:
+- **Keeping promises is cheap if you choose which slots to spend them on.** AdFill gives up $7.88 of cash
+  per extra 1,000 guaranteed impressions; serving guarantees first gives up $114.96, nearly three times
+  the $41.18 those impressions earn. ([cost of a guarantee](results/README.md#across-phases-the-cost-of-a-guarantee-and-the-recommended-setup))
 - The intuitive "let cash win early, then fight" urgency curve **lost** in Phase 1 (22 of 360 campaigns
   delivered), and became the best choice once the forecast accounted for competing campaigns (Phase 3).
 - A gradient-boosted conversion model earns **+7.8%** over a constant rate. Its ranking earns the money;
@@ -66,6 +69,19 @@ uv run adfill run --name demo --source synthetic --price-source lognormal
 
 The real-data runs need MovieLens 25M, the Criteo attribution dataset and the Open Bandit Dataset;
 download links and the full command sequence are in [`results/README.md`](results/README.md#reproduce).
+
+**Recommended setup.** Command-line defaults reproduce the earliest published runs. The configuration the
+results recommend (pay-per-conversion demand, gradient-boosted rates, contention-aware forecast with
+`k = 2`, a 1-per-day frequency cap, the avails check) is one flag:
+
+```sh
+uv run adfill sweep --name recommended --windows 2018-03-01 2018-09-01 --makegood-ratios 1.0 --preset recommended
+```
+
+On the held-out worlds it earns +16.9% over guaranteed-first with every campaign delivered in full. It
+gives up 1.6% of revenue against the best revenue-only setup, in exchange for 37% more reach and a
+forecast under which a wrong curve choice degrades gently.
+([details](results/README.md#across-phases-the-cost-of-a-guarantee-and-the-recommended-setup))
 
 ```
 adfill/core/      the decision path: eligibility, caps, urgency, pod solver, engine (no I/O)

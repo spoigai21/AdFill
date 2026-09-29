@@ -347,6 +347,10 @@ highest-bid. Beating each baseline on the axis it is bad at.
 - **Sensitivity** — how the headline pair moves with the urgency curve shape and the penalty parameter
 - **Per-decision cost** — microseconds, with the stage breakdown
 
+Cost of a guarantee and the per-campaign delivery distribution are reported across phases in
+`results/README.md` (`adfill guarantee`). Contextual lift is not measured (§5); overspend is zero by
+construction with instant counters and is the failure mode studied in Phase 5.
+
 ---
 
 ## 9. Phases

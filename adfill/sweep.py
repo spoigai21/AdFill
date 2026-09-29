@@ -34,7 +34,8 @@ def run_world(task: dict) -> list[dict]:
     rows = []
 
     def record(policy, exponent, ratio, log, us):
-        h, _ = headline(log, _with_penalty(world.campaigns, ratio))
+        h, delivered = headline(log, _with_penalty(world.campaigns, ratio))
+        shares = sorted(min(delivered[c.id], c.goal) / c.goal for c in world.campaigns)
         rf = reach_report(log, world.campaigns, cap=3)
         caps = {c.id: (c.freq_cap, c.freq_window_s) for c in world.campaigns}
         beacons = audit(log, caps, cfg.max_ad_seconds_per_hour, dup_rate=0.05, max_delay_s=3600, seed=task["seed"])
@@ -45,7 +46,10 @@ def run_world(task: dict) -> list[dict]:
                      "reach": {k: v for k, v in rf.items() if k != "campaigns"},
                      "reach_deals": {"n": len(reach_rows),
                                      "delivered_in_full": sum(r["reach"] >= r["goal"] for r in reach_rows)},
-                     "beacons": beacons})
+                     "beacons": beacons,
+                     "guaranteed_impressions": rf["impressions"],
+                     "delivery_share_of_goal": [round(x, 4) for x in shares],
+                     "campaigns_over_goal": sum(delivered[c.id] > c.goal for c in world.campaigns)})
 
     for policy in (Policy.GUARANTEED_FIRST, Policy.HIGHEST_BID):
         log = base / f"{policy.value}.jsonl"
