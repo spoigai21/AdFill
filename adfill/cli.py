@@ -75,10 +75,10 @@ def cmd_sweep(args: argparse.Namespace) -> None:
 
 
 def cmd_prep_criteo(args: argparse.Namespace) -> None:
-    from adfill.sim.prices import DEFAULT_CACHE, prepare_cache
+    from adfill.sim.prices import DEFAULT_CACHE, FULL_CACHE, prepare_cache
 
     prepare_cache(Path(args.tsv))
-    print(f"wrote {DEFAULT_CACHE}")
+    print(f"wrote {DEFAULT_CACHE} and {FULL_CACHE}")
 
 
 def cmd_pods(args: argparse.Namespace) -> None:

@@ -21,10 +21,17 @@ DEFAULT_CACHE = Path("data/criteo/costs.parquet")
 MIN_IMPRESSIONS = 10_000
 
 
-def prepare_cache(tsv_gz: Path, out: Path = DEFAULT_CACHE) -> None:
-    df = pd.read_csv(tsv_gz, sep="\t", usecols=["campaign", "cost"], dtype={"campaign": "int64", "cost": "float64"})
+FULL_CACHE = Path("data/criteo/full.parquet")
+_TRAIN_COLUMNS = ["timestamp", "uid", "campaign", "conversion", "time_since_last_click",
+                  *[f"cat{i}" for i in range(1, 10)]]
+
+
+def prepare_cache(tsv_gz: Path, out: Path = DEFAULT_CACHE, full_out: Path = FULL_CACHE) -> None:
+    """One read of the TSV: campaign costs for pricing, and the pre-impression columns for training."""
+    df = pd.read_csv(tsv_gz, sep="\t", usecols=["cost", *_TRAIN_COLUMNS])
     out.parent.mkdir(parents=True, exist_ok=True)
-    df.astype({"cost": "float32"}).to_parquet(out, index=False)
+    df[["campaign", "cost"]].astype({"campaign": "int64", "cost": "float32"}).to_parquet(out, index=False)
+    df[_TRAIN_COLUMNS].to_parquet(full_out, index=False)
 
 
 @cache
