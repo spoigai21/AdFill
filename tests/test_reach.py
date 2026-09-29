@@ -1,6 +1,5 @@
 """Phase 4 invariants: frequency caps, reach goals, and billing under duplicated, reordered reports."""
 
-import json
 from collections import Counter
 
 import pytest

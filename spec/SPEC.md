@@ -505,16 +505,18 @@ is a liability.
 ## 13. Layout
 
 ```
-README.md        overview, headline results, limitations (§12)
-spec/            SPEC.md, ASSUMPTIONS.md, BUG_LOG.md, NUMBERS.md
-core/            decision path, no I/O: eligibility, caps, urgency, pod solvers
-content/         tag-genome vectors, semantic eligibility, brand-safety rules
-forecast/        avails and win-rate estimation
-predict/         action-rate and completion-rate models, calibration reporting
-sim/             dataset loaders, session generation, deal generation, policy runner
-report/          second pass over the decision log: delivery, reach, billing, metrics
-tests/           property tests, invariants, determinism
-data/            raw and derived datasets — not committed; see README for fetch steps
+README.md          overview, headline results, limitations (§12)
+spec/              SPEC.md, ASSUMPTIONS.md, BUG_LOG.md, NUMBERS.md
+adfill/core/       decision path, no I/O: eligibility, caps, urgency, pod solvers, engine
+adfill/content/    tag-genome briefs and brand-safety rules
+adfill/forecast/   supply forecasts, avails check, win-rate estimation
+adfill/predict/    conversion-rate models, calibration reporting (no completion model: §2.3)
+adfill/bandit/     off-policy evaluation, the deadline-constrained creative bandit
+adfill/sim/        dataset loaders, sessions, breaks, deals, live events, policy runner
+adfill/report/     second passes over decision logs: delivery, reach, beacons, guarantee cost, spike
+tests/             property tests, invariants, determinism
+results/           every published result file, and the full write-up (results/README.md)
+data/              raw and derived datasets — not committed; fetch steps in results/README.md
 ```
 
 `NUMBERS.md` carries one row per reported figure: the number, the file it came from, the seed, and the

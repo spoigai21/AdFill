@@ -17,7 +17,7 @@ def load_titles(ml_dir: Path) -> dict[int, frozenset[str]]:
     movies = pd.read_csv(ml_dir / "movies.csv", usecols=["movieId", "genres"])
     return {
         int(m): frozenset(g for g in genres.split("|") if g != "(no genres listed)")
-        for m, genres in zip(movies.movieId, movies.genres)
+        for m, genres in zip(movies.movieId, movies.genres, strict=True)
     }
 
 

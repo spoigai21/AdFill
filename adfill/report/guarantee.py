@@ -31,7 +31,7 @@ def summarize(result_path: Path, exponent: float | None = None, makegood_ratio: 
         rs = pick(policy)
         if not rs or "guaranteed_impressions" not in rs[0]:
             raise ValueError(f"{result_path} lacks per-campaign delivery fields; rerun the sweep")
-        forgone = sum(h["programmatic_revenue"] - r["programmatic_revenue"] for r, h in zip(rs, hb))
+        forgone = sum(h["programmatic_revenue"] - r["programmatic_revenue"] for r, h in zip(rs, hb, strict=True))
         imps = sum(r["guaranteed_impressions"] for r in rs)
         shares = [x for r in rs for x in r["delivery_share_of_goal"]]
         out[policy] = {

@@ -83,12 +83,12 @@ def summarize(rows: list[dict]) -> str:
         lines.append("| policy | exponent | revenue lift vs GF (mean) | min | max | delivered in full | mean delivery |")
         lines.append("|---|---|---|---|---|---|---|")
         for name, rs in (("guaranteed_first", gf), ("highest_bid", hb)):
-            lifts = [r["total_revenue"] / g["total_revenue"] - 1 for r, g in zip(rs, gf)]
+            lifts = [r["total_revenue"] / g["total_revenue"] - 1 for r, g in zip(rs, gf, strict=True)]
             lines.append(f"| {name} | – | {mean(lifts):+.1%} | {min(lifts):+.1%} | {max(lifts):+.1%} | "
                          f"{sum(r['delivered_in_full'] for r in rs)}/{n} | {mean(r['mean_delivery_share'] for r in rs):.3f} |")
         for k in exps:
             rs = [idx[(w, s, "adfill", k, ratio)] for w, s in worlds]
-            lifts = [r["total_revenue"] / g["total_revenue"] - 1 for r, g in zip(rs, gf)]
+            lifts = [r["total_revenue"] / g["total_revenue"] - 1 for r, g in zip(rs, gf, strict=True)]
             lines.append(f"| adfill | {k} | {mean(lifts):+.1%} | {min(lifts):+.1%} | {max(lifts):+.1%} | "
                          f"{sum(r['delivered_in_full'] for r in rs)}/{n} | {mean(r['mean_delivery_share'] for r in rs):.3f} |")
         lines.append("")

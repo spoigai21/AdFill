@@ -60,7 +60,7 @@ def is_legal_set(items: tuple[Candidate, ...] | list[Candidate], length: int, to
 def is_legal_pod(pod: Pod, length: int, tolerance: int = 0) -> bool:
     if not is_legal_set(pod.items, length, tolerance):
         return False
-    return all(a.category != b.category for a, b in zip(pod.items, pod.items[1:]))
+    return all(a.category != b.category for a, b in zip(pod.items, pod.items[1:], strict=False))
 
 
 def _check_advertiser_categories(cands: list[Candidate]) -> None:

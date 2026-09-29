@@ -13,7 +13,7 @@ def test_curve_is_monotone_and_pins_oversold():
     for e in (0.5, 1.0, 4.0):
         u = UrgencyCurve(e)
         xs = [i / 100 for i in range(100)]
-        assert all(u(a) <= u(b) for a, b in zip(xs, xs[1:]))
+        assert all(u(a) <= u(b) for a, b in zip(xs, xs[1:], strict=False))
         assert u(1.0) == u(3.0) == OVERSOLD_URGENCY
 
 

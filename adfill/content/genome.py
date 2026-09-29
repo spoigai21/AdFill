@@ -32,4 +32,4 @@ def load_genome(ml_dir: Path) -> Genome:
     rel = np.zeros((len(titles), len(tags)), dtype=np.float32)
     rows = np.searchsorted(titles, scores.movieId.to_numpy())
     rel[rows, scores.tagId.to_numpy() - 1] = scores.relevance.to_numpy(np.float32)
-    return Genome(titles, {t: int(i) - 1 for i, t in zip(tags.tagId, tags.tag)}, rel)
+    return Genome(titles, {t: int(i) - 1 for i, t in zip(tags.tagId, tags.tag, strict=True)}, rel)

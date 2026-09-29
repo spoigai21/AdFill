@@ -11,7 +11,7 @@ from adfill.sim.prices import CriteoConversions, CriteoPrices
 
 
 def _choice(rng: np.random.Generator, table: tuple[tuple, ...], size: int) -> np.ndarray:
-    values, probs = zip(*table)
+    values, probs = zip(*table, strict=True)
     return np.asarray(values)[rng.choice(len(values), size=size, p=np.asarray(probs) / sum(probs))]
 
 
@@ -19,7 +19,7 @@ def viewer_devices(viewers: np.ndarray, cfg: SimConfig) -> dict[int, str]:
     """Each viewer watches on one device class for the whole run."""
     viewers = np.unique(viewers)
     rng = np.random.default_rng([cfg.seed, 0xDE71])
-    return dict(zip(viewers.tolist(), _choice(rng, cfg.device_mix, len(viewers)).tolist()))
+    return dict(zip(viewers.tolist(), _choice(rng, cfg.device_mix, len(viewers)).tolist(), strict=True))
 
 
 def make_breaks(

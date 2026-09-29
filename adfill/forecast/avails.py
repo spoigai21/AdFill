@@ -68,7 +68,7 @@ class Avails:
                     edges.append((2 + i, node, int(breaks * overlap)))
                 edges.append((node, sink, int(breaks * self.slots)))
                 node += 1
-        rows, cols, caps = zip(*edges)
+        rows, cols, caps = zip(*edges, strict=True)
         graph = csr_matrix((np.array(caps, dtype=np.int32), (rows, cols)), shape=(node, node))
         return int(maximum_flow(graph, src, sink).flow_value)
 

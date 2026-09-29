@@ -50,7 +50,7 @@ def test_pods_are_legal(run):
         ads = r["ads"]
         assert r["filled_s"] == sum(a["duration_s"] for a in ads) <= r["length_s"] <= r["requested_s"]
         assert len({a["advertiser"] for a in ads}) == len(ads)
-        assert all(a["category"] != b["category"] for a, b in zip(ads, ads[1:]))
+        assert all(a["category"] != b["category"] for a, b in zip(ads, ads[1:], strict=False))
         if not r["underfilled"]:
             assert r["filled_s"] == r["length_s"]
 

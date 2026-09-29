@@ -58,7 +58,7 @@ def test_greedy_never_beats_exact_and_is_ordered_legally(case):
     cands, length, _ = case
     g = solve_greedy(cands, length)
     assert g.duration_s <= length
-    assert all(a.category != b.category for a, b in zip(g.items, g.items[1:]))
+    assert all(a.category != b.category for a, b in zip(g.items, g.items[1:], strict=False))
     exact = solve_exact(cands, length, tolerance=length)  # same feasible region as greedy
     assert g.value <= exact.value + 1e-6
 
@@ -74,7 +74,7 @@ def test_order_pod_separates_whenever_possible(cats):
         return
     pod = order_pod(items)
     assert sorted(c.ref for c in pod.items) == sorted(c.ref for c in items)
-    assert all(a.category != b.category for a, b in zip(pod.items, pod.items[1:]))
+    assert all(a.category != b.category for a, b in zip(pod.items, pod.items[1:], strict=False))
 
 
 def test_one_ad_per_advertiser():
